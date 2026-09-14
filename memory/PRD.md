@@ -30,3 +30,6 @@ Prettify and complete the Bilbao Pintxo Passport website by adding funny colored
 
 ## Test credentials
 None — no authentication, no backend.
+
+## 2026-06 — Foto Personaje
+- Cada curiosidad con personaje (tarjetas 3 león, 4 txikitera, 5 gigantes, 7 Amatxu, 8 arrantzale, 9 Marijaia) muestra un pequeño retrato redondo (`.character-badge`, `data-testid="character-img-{id}"`) dentro del recuadro. Sin volver a los cromos.
