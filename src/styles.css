@@ -6,21 +6,14 @@
 
 /*
  * Design system definition.
- *
- * The @theme inline block maps CSS custom properties to Tailwind utility
- * classes (e.g. --color-primary -> bg-primary, text-primary).
- *
- * The :root and .dark blocks define the actual color values using oklch.
- * All colors MUST use oklch format.
- *
- * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
- * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ * The @theme inline block maps CSS custom properties to Tailwind utility classes.
+ * :root defines the actual color values using oklch.
  */
 
 @theme inline {
   --font-display: "Bebas Neue", sans-serif;
   --font-sans: "Manrope", sans-serif;
+  --font-hand: "Patrick Hand", "Comic Sans MS", cursive;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -64,7 +57,7 @@
 }
 
 :root {
-  --radius: 0.35rem;
+  --radius: 0.6rem;
   --background: oklch(0.965 0.018 88);
   --foreground: oklch(0.23 0.035 246);
   --card: oklch(0.99 0.008 86);
@@ -84,10 +77,10 @@
   --border: oklch(0.78 0.04 242);
   --input: oklch(0.78 0.04 242);
   --ring: oklch(0.42 0.14 244);
-  --festival: oklch(0.67 0.2 27);
+  --festival: oklch(0.63 0.22 27);
   --festival-foreground: oklch(0.99 0.008 86);
   --green: oklch(0.55 0.14 161);
-  --sun: oklch(0.84 0.16 85);
+  --sun: oklch(0.82 0.17 84);
   --ink-soft: oklch(0.36 0.045 246);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
@@ -112,41 +105,6 @@
   --color-ink-soft: var(--ink-soft);
 }
 
-.dark {
-  --background: oklch(0.129 0.042 264.695);
-  --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.208 0.042 265.755);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.929 0.013 255.508);
-  --primary-foreground: oklch(0.208 0.042 265.755);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.208 0.042 265.755);
-  --sidebar-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.279 0.041 260.031);
-  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
-}
-
 @layer base {
   * {
     border-color: var(--color-border);
@@ -160,14 +118,19 @@
   }
 }
 
+/* ---------- textures & decorative utilities ---------- */
 @utility paper-texture {
   background-image: radial-gradient(color-mix(in oklab, var(--foreground) 9%, transparent) 0.7px, transparent 0.7px);
   background-size: 7px 7px;
 }
 
-@utility route-line {
-  background-image: linear-gradient(to bottom, var(--primary) 55%, transparent 55%);
-  background-size: 2px 12px;
+@utility confetti {
+  background-image:
+    radial-gradient(circle, color-mix(in oklab, var(--sun) 80%, transparent) 3px, transparent 4px),
+    radial-gradient(circle, color-mix(in oklab, var(--festival) 70%, transparent) 3px, transparent 4px),
+    radial-gradient(circle, color-mix(in oklab, var(--green) 70%, transparent) 3px, transparent 4px);
+  background-size: 90px 90px, 120px 120px, 150px 150px;
+  background-position: 0 0, 40px 60px, 80px 20px;
 }
 
 @utility stamp-mark {
@@ -184,6 +147,68 @@
 @utility animate-stamp {
   animation: stamp-in 280ms ease-out both;
 }
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+@utility float-slow {
+  animation: float-y 6s ease-in-out infinite;
+}
+
+@keyframes wobble {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+@utility wobble {
+  animation: wobble 5s ease-in-out infinite;
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@utility rise-in {
+  animation: rise-in 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ---------- plain CSS (used inside injected HTML / third-party) ---------- */
+.marquee {
+  display: flex;
+  gap: 2.5rem;
+  width: max-content;
+  animation: marquee 34s linear infinite;
+}
+.marquee:hover { animation-play-state: paused; }
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.map-pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  line-height: 1;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: var(--pin, #1f5fa6);
+  color: #fff;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 18px;
+  border: 3px solid #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.28);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+}
+.map-pin span { display: inline-block; transform: rotate(45deg); }
+.map-pin.is-done { background: #2f9e5f; }
+
+.map-pop { display: flex; flex-direction: column; gap: 4px; font-family: "Manrope", sans-serif; }
+.map-pop strong { font-size: 14px; }
+.map-pop span { color: #475569; font-size: 12px; }
+.map-pop a { color: #1f5fa6; font-weight: 700; font-size: 12px; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; }
