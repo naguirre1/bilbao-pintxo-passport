@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { uploadPhoto, type Photo } from "@/lib/photos";
+import { uploadPhoto, type Photo } from "@/lib/firebase";
 
 type Props = {
   open: boolean;
@@ -19,20 +19,24 @@ type Props = {
   onUploaded: (photo: Photo) => void;
 };
 
-async function compress(file: File): Promise<Blob> {
-  const dataUrl = await new Promise<string>((resolve, reject) => {
+// Firestore documents cap at 1 MB; keep the base64 image comfortably under that.
+const MAX_DATA_URL = 900_000;
+
+function loadImage(file: File): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
+    reader.onload = () => {
+      const el = new Image();
+      el.onload = () => resolve(el);
+      el.onerror = reject;
+      el.src = reader.result as string;
+    };
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
-  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
-    const el = new Image();
-    el.onload = () => resolve(el);
-    el.onerror = reject;
-    el.src = dataUrl;
-  });
-  const max = 1280;
+}
+
+function render(img: HTMLImageElement, max: number, quality: number): string {
   const scale = Math.min(1, max / Math.max(img.width, img.height));
   const w = Math.round(img.width * scale);
   const h = Math.round(img.height * scale);
@@ -40,11 +44,30 @@ async function compress(file: File): Promise<Blob> {
   canvas.width = w;
   canvas.height = h;
   const ctx = canvas.getContext("2d");
-  if (!ctx) return file;
+  if (!ctx) return "";
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, w, h);
   ctx.drawImage(img, 0, 0, w, h);
-  return new Promise<Blob>((resolve) =>
-    canvas.toBlob((blob) => resolve(blob ?? file), "image/jpeg", 0.82),
-  );
+  return canvas.toDataURL("image/jpeg", quality);
+}
+
+async function compressToDataUrl(file: File): Promise<string> {
+  const img = await loadImage(file);
+  const attempts = [
+    { max: 1080, q: 0.72 },
+    { max: 960, q: 0.66 },
+    { max: 800, q: 0.6 },
+    { max: 640, q: 0.52 },
+    { max: 480, q: 0.45 },
+  ];
+  let last = "";
+  for (const a of attempts) {
+    last = render(img, a.max, a.q);
+    if (last && last.length <= MAX_DATA_URL) return last;
+  }
+  if (!last) throw new Error("No se pudo procesar la imagen");
+  if (last.length > MAX_DATA_URL) throw new Error("La foto es demasiado grande, prueba con otra");
+  return last;
 }
 
 export default function PhotoUploadDialog({ open, onOpenChange, stop, onUploaded }: Props) {
@@ -75,12 +98,8 @@ export default function PhotoUploadDialog({ open, onOpenChange, stop, onUploaded
     setBusy(true);
     setError(null);
     try {
-      const blob = await compress(file);
-      const form = new FormData();
-      form.append("file", new File([blob], "foto.jpg", { type: "image/jpeg" }));
-      form.append("stopId", String(stop.id));
-      form.append("name", name);
-      const photo = await uploadPhoto({ data: form });
+      const dataUrl = await compressToDataUrl(file);
+      const photo = await uploadPhoto(dataUrl, stop.id, name);
       onUploaded(photo);
       reset();
       onOpenChange(false);

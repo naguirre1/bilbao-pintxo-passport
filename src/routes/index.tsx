@@ -7,7 +7,7 @@ import RouteMap, { type MapStop } from "@/components/RouteMap";
 import Celebration from "@/components/Celebration";
 import PhotoUploadDialog from "@/components/PhotoUploadDialog";
 import PhotoWall from "@/components/PhotoWall";
-import { listPhotos, type Photo } from "@/lib/photos";
+import { listPhotos, type Photo } from "@/lib/firebase";
 
 const getAssetUrl = (path: string) => `${import.meta.env.BASE_URL}${path.startsWith('/') ? path.slice(1) : path}`;
 

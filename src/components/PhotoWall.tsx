@@ -3,7 +3,7 @@ import { Camera, ImagePlus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import type { Photo } from "@/lib/photos";
+import type { Photo } from "@/lib/firebase";
 
 type Props = {
   photos: Photo[];
