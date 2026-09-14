@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from "react";
 import { Check, Compass, MapPin, Stamp, Utensils } from "lucide-react";
 
 import crowdAsset from "@/assets/marijaia-multitud.png.asset.json";
-import bargeAsset from "@/assets/gabarra-athletic.png.asset.json";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
