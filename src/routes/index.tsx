@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Check, Compass, Crown, Fish, Flame, Landmark, MapPin, Music, Sparkles, Stamp, Trophy, Utensils, Wine } from "lucide-react";
+import { Check, Compass, Crown, Fish, Flame, Landmark, MapPin, Music, PartyPopper, Sparkles, Stamp, Trophy, Utensils, Wine } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import RouteMap, { type MapStop } from "@/components/RouteMap";
+import Celebration from "@/components/Celebration";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -80,6 +81,7 @@ const mapStops: MapStop[] = stops.map((s) => ({ id: s.id, name: s.name, dish: s.
 function Index() {
   const [visited, setVisited] = useState<number[]>([]);
   const [filter, setFilter] = useState<"all" | "pending" | "visited">("all");
+  const [showCelebration, setShowCelebration] = useState(false);
 
   useEffect(() => {
     const saved = window.localStorage.getItem("bilbao-passport-stamps");
@@ -104,6 +106,9 @@ function Index() {
     setVisited((current) => {
       const next = current.includes(id) ? current.filter((item) => item !== id) : [...current, id];
       window.localStorage.setItem("bilbao-passport-stamps", JSON.stringify(next));
+      if (next.length === stops.length && current.length === stops.length - 1) {
+        setTimeout(() => setShowCelebration(true), 380);
+      }
       return next;
     });
   };
@@ -183,9 +188,13 @@ function Index() {
               <div className="h-full rounded-full bg-festival transition-all duration-500" style={{ width: `${progress}%` }} data-testid="progress-bar" />
             </div>
           </div>
-          <p className="text-sm font-semibold text-muted-foreground">
-            {completed ? "¡Pasaporte completo! Zorionak 🎉" : "Tu progreso se guarda en este dispositivo."}
-          </p>
+          {completed ? (
+            <Button variant="primary" onClick={() => setShowCelebration(true)} data-testid="celebration-replay">
+              <PartyPopper className="size-4" /> Ver celebración
+            </Button>
+          ) : (
+            <p className="text-sm font-semibold text-muted-foreground">Tu progreso se guarda en este dispositivo.</p>
+          )}
         </div>
       </section>
 
@@ -310,6 +319,8 @@ function Index() {
           </div>
         </div>
       </footer>
+
+      <Celebration open={showCelebration} onClose={() => setShowCelebration(false)} />
     </main>
   );
 }
