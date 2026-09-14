@@ -52,38 +52,65 @@ export default function RouteMap({ stops, visited }: { stops: MapStop[]; visited
 
   useEffect(() => {
     let cancelled = false;
-    loadLeaflet()
-      .then((L) => {
-        if (cancelled || !ref.current || mapRef.current) return;
-        const map = L.map(ref.current, { scrollWheelZoom: false }).setView([43.2582, -2.929], 15);
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          attribution: '&copy; OpenStreetMap',
-          maxZoom: 19,
-        }).addTo(map);
+    let started = false;
 
-        const line = L.polyline(
-          stops.map((s) => [s.lat, s.lng]),
-          { color: "#1f5fa6", weight: 3, opacity: 0.5, dashArray: "2 8" },
-        ).addTo(map);
-
-        stops.forEach((s) => {
-          const done = visited.includes(s.id);
-          const marker = L.marker([s.lat, s.lng], {
-            icon: L.divIcon({ className: "", html: pinHtml(String(s.id), s.pin, done), iconSize: [34, 34], iconAnchor: [17, 34] }),
+    const init = () => {
+      if (started) return;
+      started = true;
+      loadLeaflet()
+        .then((L) => {
+          if (cancelled || !ref.current || mapRef.current) return;
+          const map = L.map(ref.current, { scrollWheelZoom: false }).setView([43.2582, -2.929], 15);
+          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: '&copy; OpenStreetMap',
+            maxZoom: 19,
           }).addTo(map);
-          marker.bindPopup(
-            `<div class="map-pop"><strong>${s.id}. ${s.name}</strong><span>${s.dish}</span><a href="${s.maps}" target="_blank" rel="noreferrer">Abrir en Google Maps →</a></div>`,
-          );
-          markersRef.current[s.id] = marker;
-        });
 
-        map.fitBounds(line.getBounds().pad(0.15));
-        mapRef.current = map;
-        setTimeout(() => map.invalidateSize(), 250);
-      })
-      .catch(() => {});
+          const line = L.polyline(
+            stops.map((s) => [s.lat, s.lng]),
+            { color: "#1f5fa6", weight: 3, opacity: 0.5, dashArray: "2 8" },
+          ).addTo(map);
+
+          stops.forEach((s) => {
+            const done = visited.includes(s.id);
+            const marker = L.marker([s.lat, s.lng], {
+              icon: L.divIcon({ className: "", html: pinHtml(String(s.id), s.pin, done), iconSize: [34, 34], iconAnchor: [17, 34] }),
+            }).addTo(map);
+            marker.bindPopup(
+              `<div class="map-pop"><strong>${s.id}. ${s.name}</strong><span>${s.dish}</span><a href="${s.maps}" target="_blank" rel="noreferrer">Abrir en Google Maps →</a></div>`,
+            );
+            markersRef.current[s.id] = marker;
+          });
+
+          map.fitBounds(line.getBounds().pad(0.15));
+          mapRef.current = map;
+          setTimeout(() => map.invalidateSize(), 250);
+        })
+        .catch(() => {});
+    };
+
+    // Only load Leaflet (CDN) when the map scrolls into view — keeps it off the
+    // critical load path so the page is interactive immediately.
+    const el = ref.current;
+    let observer: IntersectionObserver | undefined;
+    if (el && "IntersectionObserver" in window) {
+      observer = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            observer?.disconnect();
+            init();
+          }
+        },
+        { rootMargin: "200px" },
+      );
+      observer.observe(el);
+    } else {
+      init();
+    }
+
     return () => {
       cancelled = true;
+      observer?.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
