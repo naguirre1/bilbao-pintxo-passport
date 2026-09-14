@@ -66,3 +66,8 @@ None — no authentication, no backend.
 - Robustez añadida: Leaflet se carga DIFERIDO con IntersectionObserver (fuera del camino crítico) en `RouteMap.tsx`; `entry-client.tsx` envuelto en un ErrorBoundary (evita blanco total ante cualquier error); fuentes de Google en `index.html` no bloqueantes (media=print/onload).
 - Verificado por testing_agent (iteration_2.json, ~95%): la home NO se queda en blanco, el diálogo 'Subir mi foto' ABRE (parada y muro), subida a Firestore + persistencia tras recarga OK, mapa no bloquea. Solo 1 issue LOW cosmético (visibilidad del sello en headless).
 - ACCIÓN PENDIENTE DEL USUARIO: re-desplegar (Save to GitHub) para publicar esta versión limpia en Pages. El fallo desaparece con el código actual.
+
+## 2026-09 — Retos de team building (Reto sorpresa)
+- Nueva tarjeta con botón "¡Dame un reto!" (parada 5, Sorginzulo; `teamChallenge: true`, data-testid team-challenge-btn-5). Abre `TeamChallengeDialog` estilo "pásate el móvil": muestra "Turno de la persona N" + un reto aleatorio; botones "Otro reto" (re-tira, data-testid team-reroll-btn) y "Siguiente persona" (N+1 + nuevo reto, data-testid team-next-person-btn).
+- 6 retos (en `TeamChallengeDialog.tsx` TEAM_RETOS): chiste, Macarena, "Porque Asturias es mi patria", talentos inútiles, palabra en euskera, anécdota vergonzosa. (Descartados los demás por el usuario; el de Marijaia ya está como reto foto.)
+- Verificado por captura: abre, re-tira y pasa de persona sin errores.

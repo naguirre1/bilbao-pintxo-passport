@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Camera, Check, Compass, Flame, ImagePlus, MapPin, PartyPopper, Sparkles, Stamp, Utensils } from "lucide-react";
+import { Camera, Check, Compass, Dices, Flame, ImagePlus, MapPin, PartyPopper, Sparkles, Stamp, Utensils } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import RouteMap, { type MapStop } from "@/components/RouteMap";
 import Celebration from "@/components/Celebration";
 import PhotoUploadDialog from "@/components/PhotoUploadDialog";
 import PhotoWall from "@/components/PhotoWall";
+import TeamChallengeDialog from "@/components/TeamChallengeDialog";
 import { listPhotos, type Photo } from "@/lib/firebase";
 
 const getAssetUrl = (path: string) => `${import.meta.env.BASE_URL}${path.startsWith('/') ? path.slice(1) : path}`;
@@ -43,6 +44,7 @@ type Stop = {
   challenge?: string;
   character?: { img: string; alt: string };
   photoChallenge?: { title: string; prompt: string };
+  teamChallenge?: boolean;
 };
 
 const PIN: Record<Color, string> = { blue: "#1f5fa6", red: "#cf3b2a", green: "#2f9e5f" };
@@ -53,7 +55,7 @@ const stops: Stop[] = [
   { id: 2, name: "El Puertito", handle: "@el_puertito", dish: "Ostras al gusto", img: "/ill/ostras.png", note: "Pionero de las ostras en Bilbao y Bizkaia, abierto desde 2013.", maps: "https://www.google.com/maps/search/?api=1&query=El+Puertito+Bilbao", color: "blue", lat: 43.2615, lng: -2.9332, challenge: "Elige una ostra que nunca hayas probado y apunta su origen en el pasaporte." },
   { id: 3, name: "Aitaren", handle: "@aitaren", dish: "Bocado de buey", price: "4,95 €", img: "/ill/buey.png", note: "Casa hermana de Amaren, especializada en carne de buey.", maps: "https://www.google.com/maps/search/?api=1&query=Aitaren+Boulevard+Bilbao", color: "red", lat: 43.2601, lng: -2.9282, curiosity: "San Mamés, 'La Catedral', debe su nombre al santo lanzado a los leones: por eso a los jugadores del Athletic se les llama leones, y el club solo juega con cantera vasca desde 1898.", character: { img: "/ill/leon.png", alt: "León del Athletic" } },
   { id: 4, name: "Gure Toki", handle: "@guretoki", dish: "Pintxo creativo de temporada", price: "2,90 €", img: "/ill/creativo.png", note: "Barra premiada donde la propuesta cambia con frecuencia.", maps: "https://www.google.com/maps/search/?api=1&query=Gure+Toki+Plaza+Nueva+12+Bilbao", color: "green", lat: 43.2571, lng: -2.9235, curiosity: "El 11 de octubre es el Día del Txikitero: cuadrillas con txapela recorren el Casco Viejo cantando y brindando con pequeños vasos de vino (txikitos).", character: { img: "/ill/txikitero.png", alt: "Txikitera con txapela" }, photoChallenge: { title: "Txikitero por un día", prompt: "Brinda con tu txikito (vino en vaso pequeño) bien en alto, como una auténtica cuadrilla. ¡Aupa!" } },
-  { id: 5, name: "Sorginzulo", handle: "@sorginzulo_bilbao", dish: "Tortilla de patata", price: "12,95 €", img: "/ill/tortilla.png", note: "Finalista nacional de tortilla y premiado por sus pintxos en Bizkaia.", maps: "https://www.google.com/maps/search/?api=1&query=Sorginzulo+Plaza+Nueva+Bilbao", color: "blue", lat: 43.2570, lng: -2.9240, curiosity: "La Plaza Nueva se inauguró en 1851; los domingos acoge mercado de sellos y pintxos, y por sus soportales desfilan los gigantes y cabezudos al son del txistu.", character: { img: "/ill/gigantes.png", alt: "Gigantes de Bilbao" } },
+  { id: 5, name: "Sorginzulo", handle: "@sorginzulo_bilbao", dish: "Tortilla de patata", price: "12,95 €", img: "/ill/tortilla.png", note: "Finalista nacional de tortilla y premiado por sus pintxos en Bizkaia.", maps: "https://www.google.com/maps/search/?api=1&query=Sorginzulo+Plaza+Nueva+Bilbao", color: "blue", lat: 43.2570, lng: -2.9240, curiosity: "La Plaza Nueva se inauguró en 1851; los domingos acoge mercado de sellos y pintxos, y por sus soportales desfilan los gigantes y cabezudos al son del txistu.", character: { img: "/ill/gigantes.png", alt: "Gigantes de Bilbao" }, teamChallenge: true },
   { id: 6, name: "La Olla", handle: "@laolladebilbao", dish: "Barra de pintxos clásicos", img: "/ill/clasico.png", note: "Parada en la Plaza Nueva; pregunta por el pintxo del día.", maps: "https://www.google.com/maps/search/?api=1&query=La+Olla+Plaza+Nueva+Bilbao", color: "green", lat: 43.2568, lng: -2.9243, challenge: "Aprende a decir «on egin» (buen provecho) antes de probar el pintxo." },
   { id: 7, name: "La Viña del Ensanche", handle: "@lavinadelensanche", dish: "Foie, hongos y patata", img: "/ill/foie.png", note: "Combinación para buscar en barra; puede depender de la temporada.", maps: "https://www.google.com/maps/search/?api=1&query=La+Vina+del+Ensanche+Diputacion+10+Bilbao", color: "red", lat: 43.2624, lng: -2.9348, curiosity: "La Amatxu de Begoña, patrona de Bizkaia, corona su monte; 'amatxu' significa 'madre' en euskera y su talla data de los siglos XIII–XIV.", character: { img: "/ill/begona.png", alt: "Amatxu de Begoña" } },
   { id: 8, name: "Taberna Basaras", handle: "Casco Viejo", dish: "Anchoa en trainera", img: "/ill/anchoa.png", note: "Taberna histórica desde 1940, célebre por sus anchoas y vinos.", maps: "https://www.google.com/maps/search/?api=1&query=Taberna+Basaras+Pelota+2+Bilbao", color: "blue", lat: 43.2561, lng: -2.9246, curiosity: "Célebre por sus anchoas desde 1940. El traje de arrantzale y sardinera —pañuelo, mandil de rayas y cesta— llena de color los desfiles, herencia de las traineras que competían por llegar antes a puerto.", character: { img: "/ill/arrantzale.png", alt: "Arrantzale y sardinera" } },
@@ -80,6 +82,7 @@ function Index() {
   const [showCelebration, setShowCelebration] = useState(false);
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [uploadStop, setUploadStop] = useState<Stop | null>(null);
+  const [teamOpen, setTeamOpen] = useState(false);
 
   useEffect(() => {
     const saved = window.localStorage.getItem("bilbao-passport-stamps");
@@ -348,6 +351,25 @@ function Index() {
                     </div>
                   )}
 
+                  {stop.teamChallenge && (
+                    <div className="mt-4 rounded-lg border-2 border-dashed border-festival/40 bg-festival/10 p-3.5" data-testid={`team-challenge-block-${stop.id}`}>
+                      <p className="mb-1 flex items-center gap-1.5 text-sm font-extrabold uppercase text-festival">
+                        <Dices className="size-4" /> Reto sorpresa de cuadrilla
+                      </p>
+                      <p className="mb-3 text-sm leading-relaxed text-ink-soft">
+                        Un reto de team building para animar la parada. ¡Pasaos el móvil!
+                      </p>
+                      <Button
+                        variant="primary"
+                        className="w-full"
+                        onClick={() => setTeamOpen(true)}
+                        data-testid={`team-challenge-btn-${stop.id}`}
+                      >
+                        <Dices className="size-4" /> ¡Dame un reto!
+                      </Button>
+                    </div>
+                  )}
+
                   <div className="mt-5 flex flex-wrap gap-2 pt-1">
                     <Button variant={isVisited ? "primary" : "stamp"} onClick={() => toggleStamp(stop.id)} data-testid={`stamp-btn-${stop.id}`}>
                       {isVisited ? <Check className="size-4" /> : <Stamp className="size-4" />}
@@ -383,6 +405,7 @@ function Index() {
       </footer>
 
       <Celebration open={showCelebration} onClose={() => setShowCelebration(false)} />
+      <TeamChallengeDialog open={teamOpen} onOpenChange={setTeamOpen} />
       <PhotoUploadDialog
         open={!!uploadStop}
         onOpenChange={(o) => !o && setUploadStop(null)}
