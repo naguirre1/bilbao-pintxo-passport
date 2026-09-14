@@ -1,0 +1,30 @@
+{
+  "summary": "Frontend-only verification of Pasaporte de Pintxos on http://localhost:3000. Home renders (hero, progress bar, map section, 10 stop cards). Stop 4 and Stop 9 have photo challenge blocks with 'Subir mi foto' buttons; stop 5 correctly has NO photo challenge. The main bug is FIXED: upload-dialog opens from photo-upload-btn-4 and from wall-add-btn. End-to-end Firestore upload works: submitting /app/public/ill/leon.png with name 'TEST_leon' closes the dialog without upload-error and the picture appears in the photo-wall. Persistence verified: after reload the TEST_leon photo is still shown (read from Firestore). The map section is present but does not block interactivity.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "StampButton (stop 1)", "issue": "stamp-badge-{id} did not become visible within 5s after first click in one run (likely animate-stamp opacity/scale transition delay). Behavior may be flaky in headless. Not a blocker but worth checking initial visibility of .ill-stamp / .animate-stamp so the badge is immediately visible after the state toggles.", "selector": "[data-testid=stamp-badge-1]", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Optional: review .animate-stamp CSS to ensure the badge is visible immediately after being mounted (no long delayed appearance) to make automated / user perception consistent.",
+    "Clean up TEST_leon documents in Firestore 'photos' collection after review."
+  ],
+  "critical_code_review_comments": [
+    "firebase.ts: Firebase web config is committed in source. This is expected for public web apps, but ensure Firestore security rules restrict writes to the 'photos' collection (size limits, rate limits) since anyone can call addDoc.",
+    "firebase.ts listPhotos hardcodes limit(300) — fine for MVP but consider pagination as data grows.",
+    "Uploading images as base64 inside Firestore docs is not ideal long-term (document 1MB limit, high read costs). Consider Firebase Storage for future iterations.",
+    "PhotoUploadDialog compresses to <900KB base64 — leaves little headroom below the 1MB Firestore doc limit; consider lowering the cap to ~700KB to include metadata safely."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "~95%"},
+  "test_credentials": "None required",
+  "seed_data_creation": "Created one Firestore doc in 'photos' collection with name 'TEST_leon' (stopId 4) via the UI upload flow. Main agent should delete it after review.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "App runs at localhost:3000. Use wait_until='domcontentloaded' (never networkidle — Firestore keeps an open connection). Key selectors: stamp-btn-{id}, stamp-badge-{id}, photo-challenge-{4,9}, photo-upload-btn-{4,9}, upload-dialog, upload-file-input, upload-name-input, upload-submit-btn, upload-error, photo-wall, wall-add-btn, route-map. Only stops 4 and 9 have photo challenges. Uploads go to Firestore 'photos' collection (base64). Persistence works across reload.",
+  "rca of the issue": "Original bug: 'Subir mi foto' popup did not open and home stayed blank. Refactor (deferred Leaflet via IntersectionObserver + error boundary + Firestore SDK for photos) resolved it. Verified in this run: dialog opens from both stop-level and wall-level buttons, upload + persistence work end-to-end."
+}

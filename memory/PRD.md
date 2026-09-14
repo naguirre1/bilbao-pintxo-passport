@@ -59,3 +59,10 @@ None — no authentication, no backend.
 - Eliminado `src/lib/photos.ts` (server fn) y carpeta `public/photos`. Verificado E2E: subida → muro → persiste tras recargar (desde Firestore) sin errores de permisos.
 - Proyecto Firebase: `prueba-e0682`. NOTA SEGURIDAD: el usuario pegó por error una clave de servicio (admin) en el chat; se le indicó revocarla. NO usamos Admin SDK; solo config web pública.
 - ⚠️ La subida es abierta (cualquiera puede subir). Sin panel de moderación (el usuario lo aceptó público).
+
+## 2026-09 — Fix "página en blanco/bloqueada" en GitHub Pages
+- Causa raíz: el build desplegado en Pages estaba OBSOLETO. Versiones previas del muro usaban server functions de TanStack Start (`src/lib/photos.ts` con `createServerFn`, imports server-only) que en un build SPA estático (vite.config.pages.ts, sin plugin de Start) rompen en runtime → pantalla en blanco y el diálogo no abría.
+- Ya resuelto en el código actual: fotos con Firebase Firestore (100% cliente), sin imports server-only en el bundle de Pages (verificado: 0 refs a createStart/server-entry en dist).
+- Robustez añadida: Leaflet se carga DIFERIDO con IntersectionObserver (fuera del camino crítico) en `RouteMap.tsx`; `entry-client.tsx` envuelto en un ErrorBoundary (evita blanco total ante cualquier error); fuentes de Google en `index.html` no bloqueantes (media=print/onload).
+- Verificado por testing_agent (iteration_2.json, ~95%): la home NO se queda en blanco, el diálogo 'Subir mi foto' ABRE (parada y muro), subida a Firestore + persistencia tras recarga OK, mapa no bloquea. Solo 1 issue LOW cosmético (visibilidad del sello en headless).
+- ACCIÓN PENDIENTE DEL USUARIO: re-desplegar (Save to GitHub) para publicar esta versión limpia en Pages. El fallo desaparece con el código actual.
