@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Check, Compass, Crown, Fish, Flame, Landmark, MapPin, Music, PartyPopper, Sparkles, Stamp, Trophy, Utensils, Wine } from "lucide-react";
+import { Check, Compass, Flame, MapPin, PartyPopper, Sparkles, Stamp, Utensils } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import RouteMap, { type MapStop } from "@/components/RouteMap";
@@ -44,25 +44,14 @@ const ACCENT: Record<Color, string> = { blue: "bg-primary", red: "bg-festival", 
 const stops: Stop[] = [
   { id: 1, name: "El Globo", handle: "@elglobo.bilbao", dish: "Txangurro gratinado", price: "2,40 €", img: "/ill/txangurro.png", note: "Uno de sus bocados más famosos. El precio de barra puede variar.", maps: "https://www.google.com/maps/search/?api=1&query=El+Globo+Diputacion+8+Bilbao", color: "red", lat: 43.2626, lng: -2.9345, curiosity: "El Casco Viejo son las Siete Calles (Zazpikaleak), el núcleo medieval de la villa del siglo XIV." },
   { id: 2, name: "El Puertito", handle: "@el_puertito", dish: "Ostras al gusto", img: "/ill/ostras.png", note: "Pionero de las ostras en Bilbao y Bizkaia, abierto desde 2013.", maps: "https://www.google.com/maps/search/?api=1&query=El+Puertito+Bilbao", color: "blue", lat: 43.2615, lng: -2.9332, challenge: "Elige una ostra que nunca hayas probado y apunta su origen en el pasaporte." },
-  { id: 3, name: "Aitaren", handle: "@aitaren", dish: "Bocado de buey", price: "4,95 €", img: "/ill/buey.png", note: "Casa hermana de Amaren, especializada en carne de buey.", maps: "https://www.google.com/maps/search/?api=1&query=Aitaren+Boulevard+Bilbao", color: "red", lat: 43.2601, lng: -2.9282, curiosity: "A los jugadores del Athletic se les llama 'leones' por San Mamés, el santo lanzado a los leones." },
-  { id: 4, name: "Gure Toki", handle: "@guretoki", dish: "Pintxo creativo de temporada", price: "2,90 €", img: "/ill/creativo.png", note: "Barra premiada donde la propuesta cambia con frecuencia.", maps: "https://www.google.com/maps/search/?api=1&query=Gure+Toki+Plaza+Nueva+12+Bilbao", color: "green", lat: 43.2571, lng: -2.9235, challenge: "Pide una recomendación sin mirar la vitrina y déjate sorprender." },
-  { id: 5, name: "Sorginzulo", handle: "@sorginzulo_bilbao", dish: "Tortilla de patata", price: "12,95 €", img: "/ill/tortilla.png", note: "Finalista nacional de tortilla y premiado por sus pintxos en Bizkaia.", maps: "https://www.google.com/maps/search/?api=1&query=Sorginzulo+Plaza+Nueva+Bilbao", color: "blue", lat: 43.2570, lng: -2.9240, curiosity: "La Plaza Nueva se inauguró en 1851; los domingos acoge mercado de sellos, libros y pintxos." },
+  { id: 3, name: "Aitaren", handle: "@aitaren", dish: "Bocado de buey", price: "4,95 €", img: "/ill/buey.png", note: "Casa hermana de Amaren, especializada en carne de buey.", maps: "https://www.google.com/maps/search/?api=1&query=Aitaren+Boulevard+Bilbao", color: "red", lat: 43.2601, lng: -2.9282, curiosity: "San Mamés, 'La Catedral', debe su nombre al santo lanzado a los leones: por eso a los jugadores del Athletic se les llama leones, y el club solo juega con cantera vasca desde 1898." },
+  { id: 4, name: "Gure Toki", handle: "@guretoki", dish: "Pintxo creativo de temporada", price: "2,90 €", img: "/ill/creativo.png", note: "Barra premiada donde la propuesta cambia con frecuencia.", maps: "https://www.google.com/maps/search/?api=1&query=Gure+Toki+Plaza+Nueva+12+Bilbao", color: "green", lat: 43.2571, lng: -2.9235, curiosity: "El 11 de octubre es el Día del Txikitero: cuadrillas con txapela recorren el Casco Viejo cantando y brindando con pequeños vasos de vino (txikitos)." },
+  { id: 5, name: "Sorginzulo", handle: "@sorginzulo_bilbao", dish: "Tortilla de patata", price: "12,95 €", img: "/ill/tortilla.png", note: "Finalista nacional de tortilla y premiado por sus pintxos en Bizkaia.", maps: "https://www.google.com/maps/search/?api=1&query=Sorginzulo+Plaza+Nueva+Bilbao", color: "blue", lat: 43.2570, lng: -2.9240, curiosity: "La Plaza Nueva se inauguró en 1851; los domingos acoge mercado de sellos y pintxos, y por sus soportales desfilan los gigantes y cabezudos al son del txistu." },
   { id: 6, name: "La Olla", handle: "@laolladebilbao", dish: "Barra de pintxos clásicos", img: "/ill/clasico.png", note: "Parada en la Plaza Nueva; pregunta por el pintxo del día.", maps: "https://www.google.com/maps/search/?api=1&query=La+Olla+Plaza+Nueva+Bilbao", color: "green", lat: 43.2568, lng: -2.9243, challenge: "Aprende a decir «on egin» (buen provecho) antes de probar el pintxo." },
-  { id: 7, name: "La Viña del Ensanche", handle: "@lavinadelensanche", dish: "Foie, hongos y patata", img: "/ill/foie.png", note: "Combinación para buscar en barra; puede depender de la temporada.", maps: "https://www.google.com/maps/search/?api=1&query=La+Vina+del+Ensanche+Diputacion+10+Bilbao", color: "red", lat: 43.2624, lng: -2.9348, curiosity: "La Amatxu de Begoña es la patrona de Bizkaia; su talla data de los siglos XIII–XIV." },
-  { id: 8, name: "Taberna Basaras", handle: "Casco Viejo", dish: "Anchoa en trainera", img: "/ill/anchoa.png", note: "Taberna histórica desde 1940, célebre por sus anchoas y vinos.", maps: "https://www.google.com/maps/search/?api=1&query=Taberna+Basaras+Pelota+2+Bilbao", color: "blue", lat: 43.2561, lng: -2.9246, curiosity: "Las traineras nacieron como barcos de pesca; competir por llegar antes a puerto acabó siendo regata." },
-  { id: 9, name: "Gerri Taberna", handle: "Casco Viejo", dish: "Lámina de txuleta con patata", img: "/ill/chuleta.png", note: "Un bocado de txuleta en pleno Casco Viejo.", maps: "https://www.google.com/maps/search/?api=1&query=Gerri+Taberna+Bilbao", color: "red", lat: 43.2556, lng: -2.9232, challenge: "Brinda con un «topa» y suma tu sello sin prisas." },
+  { id: 7, name: "La Viña del Ensanche", handle: "@lavinadelensanche", dish: "Foie, hongos y patata", img: "/ill/foie.png", note: "Combinación para buscar en barra; puede depender de la temporada.", maps: "https://www.google.com/maps/search/?api=1&query=La+Vina+del+Ensanche+Diputacion+10+Bilbao", color: "red", lat: 43.2624, lng: -2.9348, curiosity: "La Amatxu de Begoña, patrona de Bizkaia, corona su monte; 'amatxu' significa 'madre' en euskera y su talla data de los siglos XIII–XIV." },
+  { id: 8, name: "Taberna Basaras", handle: "Casco Viejo", dish: "Anchoa en trainera", img: "/ill/anchoa.png", note: "Taberna histórica desde 1940, célebre por sus anchoas y vinos.", maps: "https://www.google.com/maps/search/?api=1&query=Taberna+Basaras+Pelota+2+Bilbao", color: "blue", lat: 43.2561, lng: -2.9246, curiosity: "Célebre por sus anchoas desde 1940. El traje de arrantzale y sardinera —pañuelo, mandil de rayas y cesta— llena de color los desfiles, herencia de las traineras que competían por llegar antes a puerto." },
+  { id: 9, name: "Gerri Taberna", handle: "Casco Viejo", dish: "Lámina de txuleta con patata", img: "/ill/chuleta.png", note: "Un bocado de txuleta en pleno Casco Viejo.", maps: "https://www.google.com/maps/search/?api=1&query=Gerri+Taberna+Bilbao", color: "red", lat: 43.2556, lng: -2.9232, curiosity: "Marijaia, reina de la Aste Nagusia, preside las fiestas con los brazos en alto desde 1978; la última noche se despide ardiendo sobre la ría entre fuegos artificiales." },
   { id: 10, name: "Dumpling+", handle: "Goienkale", dish: "Dumplings caseros", img: "/ill/dumpling.png", note: "Un giro internacional en una de las calles históricas del Casco Viejo.", maps: "https://www.google.com/maps/search/?api=1&query=Dumpling+Goienkale+Bilbao", color: "green", lat: 43.2585, lng: -2.9252, curiosity: "Goienkale (Somera) es una de las siete calles originales de la villa." },
-];
-
-type Character = { key: string; name: string; role: string; img: string; icon: React.ReactNode; curiosity: string };
-
-const characters: Character[] = [
-  { key: "marijaia", name: "Marijaia", role: "Reina de la Aste Nagusia", img: "/ill/marijaia.png", icon: <Sparkles className="size-4" />, curiosity: "Creada en 1978 por la artista Mari Puri Herrero, preside las fiestas con los brazos en alto. La última noche se despide ardiendo sobre la ría entre fuegos artificiales." },
-  { key: "leon", name: "El León", role: "Símbolo del Athletic", img: "/ill/leon.png", icon: <Trophy className="size-4" />, curiosity: "San Mamés, 'La Catedral', debe su nombre al santo lanzado a los leones. Por eso a los jugadores del Athletic se les llama leones, y el club solo juega con cantera vasca desde 1898." },
-  { key: "gigantes", name: "Gigantes y Cabezudos", role: "Reyes de la comparsa", img: "/ill/gigantes.png", icon: <Crown className="size-4" />, curiosity: "Enormes figuras de reyes y reinas que desfilan por las calles al son del txistu, mientras los cabezudos persiguen a la chavalería en fiestas." },
-  { key: "txikiteros", name: "Txikiteros", role: "Con txapela y txikito", img: "/ill/txikitero.png", icon: <Wine className="size-4" />, curiosity: "El 11 de octubre es el Día del Txikitero: cuadrillas que recorren el Casco Viejo cantando y brindando con pequeños vasos de vino, la txapela siempre puesta." },
-  { key: "arrantzales", name: "Arrantzales", role: "El traje del mar", img: "/ill/arrantzale.png", icon: <Fish className="size-4" />, curiosity: "El traje tradicional de arrantzale y sardinera llena de color los desfiles: pañuelo, mandil de rayas y cesta al hombro." },
-  { key: "begona", name: "Amatxu de Begoña", role: "Patrona de Bizkaia", img: "/ill/begona.png", icon: <Landmark className="size-4" />, curiosity: "Su basílica corona el monte Begoña. 'Amatxu' significa 'madre' en euskera; su talla data de los siglos XIII–XIV." },
 ];
 
 const funFacts = [
@@ -137,7 +126,7 @@ function Index() {
               <span className="text-sun">DE PINTXOS</span>
             </h1>
             <p className="mt-6 max-w-xl text-base font-semibold leading-relaxed sm:text-lg">
-              Diez barras, historias de las Siete Calles y pequeños retos para saborear Bilbao a tu ritmo. Sella cada visita y colecciona a los personajes más bilbaínos.
+              Diez barras, historias de las Siete Calles y curiosidades de sus personajes —Marijaia, el león, los gigantes, los txikiteros...— para saborear Bilbao a tu ritmo. Sella cada visita y completa el pasaporte.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Button asChild variant="secondary" data-testid="cta-start">
@@ -278,32 +267,6 @@ function Index() {
           })}
         </div>
         {filtered.length === 0 && <p className="rounded-xl border-2 border-dashed border-border bg-card p-10 text-center font-bold">No hay paradas en este filtro.</p>}
-      </section>
-
-      {/* ---------------- CHARACTERS ---------------- */}
-      <section id="personajes" className="relative border-t-2 border-primary/15 bg-secondary/40">
-        <div className="mx-auto max-w-7xl px-5 py-16 lg:px-10">
-          <div className="mb-9">
-            <p className="mb-2 flex items-center gap-2 text-sm font-extrabold uppercase text-festival"><Music className="size-4" /> Álbum de cromos</p>
-            <h2 className="font-display text-6xl leading-none text-primary sm:text-7xl">PERSONAJES DE BILBAO</h2>
-            <p className="mt-3 max-w-2xl text-sm font-semibold text-ink-soft">Los rostros que dan color a las fiestas y a la ría. Cada cromo, su historia.</p>
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {characters.map((c) => (
-              <article key={c.key} className="group flex flex-col overflow-hidden rounded-2xl border-2 border-border bg-card shadow-sm transition-transform duration-300 hover:-translate-y-1.5 hover:rotate-[-0.5deg] hover:shadow-xl" data-testid={`character-${c.key}`}>
-                <div className="flex h-52 items-center justify-center bg-white">
-                  <img src={c.img} alt={c.name} className="h-52 w-full object-contain p-2 transition-transform duration-300 group-hover:scale-105" loading="lazy" />
-                </div>
-                <div className="flex flex-1 flex-col p-5">
-                  <span className="mb-1 inline-flex w-fit items-center gap-1.5 rounded-full bg-sun px-2.5 py-0.5 text-xs font-extrabold uppercase text-primary">{c.icon}{c.role}</span>
-                  <h3 className="font-display text-3xl leading-tight text-foreground">{c.name}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-ink-soft">{c.curiosity}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
       </section>
 
       {/* ---------------- FOOTER ---------------- */}

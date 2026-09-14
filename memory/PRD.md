@@ -17,13 +17,11 @@ Prettify and complete the Bilbao Pintxo Passport website by adding funny colored
 - `vite.config.ts`, `/app/frontend/package.json` — serving glue for this environment.
 
 ## Implemented (2026-06)
-- 16 custom comic illustrations (10 pintxos + 6 characters) + skyline hero backdrop.
-- Illustrated hero with Marijaia/León/txikitera cromos, blue Bilbao palette, curiosities marquee.
-- 10 illustrated stop cards with price, dish, note, and either a Curiosidad or Reto; Sellar/Maps buttons; BILBAO stamp on seal; progress bar; all/pending/visited filters.
-- Casco Viejo & Athletic curiosities woven into cards + marquee.
-- "Personajes de Bilbao" section: 6 cromos (Marijaia, León, Gigantes y Cabezudos, Txikiteros, Arrantzales, Amatxu de Begoña) with a curiosity each.
-- Interactive Leaflet route map with 10 numbered pins (turn green when sealed) + Google Maps popups.
-- Tested end-to-end by testing agent: 100% frontend pass, no bugs.
+- 16 custom comic illustrations (10 pintxos + hero/footer character art) + skyline hero backdrop.
+- Illustrated hero, curiosities marquee, progress, Leaflet route map, 10 illustrated stop cards, footer.
+- Characters are woven INTO the stop-card curiosities (no separate cromos section): León→card 3, Txikiteros→card 4, Gigantes→card 5, Amatxu→card 7, Arrantzales→card 8, Marijaia→card 9. Casco Viejo facts kept on cards 1, 5, 10. Retos remain only on cards 2 and 6 (removed from 4 and 9 per user).
+- "Sello Marijaia": full-screen confetti + Marijaia "¡ZORIONAK!" modal when all 10 stops are sealed, with a "Ver celebración" replay button.
+- Tested end-to-end by testing agent: 100% frontend pass.
 
 ## Backlog / next
 - P2: Extract `stops`/`characters` data + card components into separate files if the page grows.
