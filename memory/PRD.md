@@ -51,3 +51,11 @@ None — no authentication, no backend.
 - `getAssetUrl(path)` usa `import.meta.env.BASE_URL` para prefijar todas las imágenes `/ill/*` (y el sello). En dev BASE_URL=`/` → sin cambios en preview. `vite.config.ts` añade base/ssr condicionales (solo activos en producción/MODE=spa), preview SSR intacto.
 - `package.json`: `build`→pages, `build:ssr`→SSR original, `preview`→pages.
 - ⚠️ IMPORTANTE: GitHub Pages es ESTÁTICO. Las server functions (`src/lib/photos.ts`) NO funcionan allí → la subida de fotos y el muro solo funcionan en el preview de Emergent (SSR). En la web de Pages, la ruta/sellos/mapa sí funcionan pero el muro estará vacío y "Subir foto" fallará.
+
+## 2026-09 — Fotos en GitHub Pages con Firebase (Firestore, NoSQL)
+- Motivo: GitHub Pages es estático → las server functions no sirven. Se migró el muro de fotos a **Firebase Firestore** (SDK cliente), que funciona igual en preview y en Pages.
+- Solo Firestore (sin Storage, para no salir del plan gratis Spark). La imagen se guarda **en base64 dentro del documento** de la colección `photos` (campos: stopId, name, image, createdAt ISO). Compresión adaptativa en cliente (`PhotoUploadDialog.tsx`) para quedar < ~900 KB (límite doc Firestore 1 MB).
+- `src/lib/firebase.ts`: init (config web pública hardcodeada, segura), `uploadPhoto(dataUrl, stopId, name)` (addDoc) y `listPhotos()` (query orderBy createdAt desc, limit 300). Reglas Firestore públicas (read/write: if true) — acordado abierto/sin login.
+- Eliminado `src/lib/photos.ts` (server fn) y carpeta `public/photos`. Verificado E2E: subida → muro → persiste tras recargar (desde Firestore) sin errores de permisos.
+- Proyecto Firebase: `prueba-e0682`. NOTA SEGURIDAD: el usuario pegó por error una clave de servicio (admin) en el chat; se le indicó revocarla. NO usamos Admin SDK; solo config web pública.
+- ⚠️ La subida es abierta (cualquiera puede subir). Sin panel de moderación (el usuario lo aceptó público).
