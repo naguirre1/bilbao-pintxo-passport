@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import RouteMap, { type MapStop } from "@/components/RouteMap";
 import Celebration from "@/components/Celebration";
 
+const getAssetUrl = (path: string) => `${import.meta.env.BASE_URL}${path.startsWith('/') ? path.slice(1) : path}`;
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -228,7 +230,7 @@ function Index() {
                 <div className="relative flex h-44 items-center justify-center bg-white">
                   <span className={`absolute left-3 top-3 z-10 flex size-9 items-center justify-center rounded-full font-display text-xl text-white shadow ${ACCENT[stop.color]}`}>{stop.id}</span>
                   {stop.price && <span className="absolute right-3 top-3 z-10 rounded-full bg-sun px-2.5 py-1 font-hand text-sm text-primary shadow-sm">{stop.price}</span>}
-                  <img src={stop.img} alt={stop.dish} className="h-44 w-full object-contain p-2 transition-transform duration-300 group-hover:scale-105" loading="lazy" />
+                  <img src={getAssetUrl(stop.img)} alt={stop.dish} className="h-44 w-full object-contain p-2 transition-transform duration-300 group-hover:scale-105" loading="lazy" />
                   {isVisited && (
                     <span className="stamp-mark animate-stamp absolute bottom-2 right-3 flex size-16 items-center justify-center rounded-full border-2 border-primary bg-card/70 font-display text-lg text-primary" data-testid={`stamp-badge-${stop.id}`}>
                       BILBAO
@@ -248,7 +250,7 @@ function Index() {
                     <div className={`mt-4 flex gap-3 rounded-lg p-3.5 text-sm leading-relaxed ${stop.challenge ? "bg-festival/10" : "bg-secondary"}`}>
                       {stop.character && (
                         <img
-                          src={stop.character.img}
+                          src={getAssetUrl(stop.character.img)}
                           alt={stop.character.alt}
                           title={stop.character.alt}
                           className="character-badge"
@@ -290,7 +292,7 @@ function Index() {
             <p className="mt-1 text-xs font-semibold text-primary-foreground/80">Come, camina, pregunta y cuida la ciudad. On egin! · Aupa!</p>
           </div>
           <div className="w-28 -rotate-3 overflow-hidden rounded-xl border-4 border-white bg-white shadow-lg">
-            <img src="/ill/gigantes.png" alt="Gigantes de Bilbao" className="h-28 w-full object-cover" />
+            <img src={getAssetUrl("/ill/gigantes.png")} alt="Gigantes de Bilbao" className="h-28 w-full object-cover" />
           </div>
         </div>
       </footer>

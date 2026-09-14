@@ -73,7 +73,7 @@ export default function Celebration({ open, onClose }: { open: boolean; onClose:
         </button>
 
         <div className="bg-white px-6 pt-8">
-          <img src="/ill/marijaia.png" alt="Marijaia celebrando" className="float-slow mx-auto h-56 w-auto" />
+          <img src={`${import.meta.env.BASE_URL}ill/marijaia.png`} alt="Marijaia celebrando" className="float-slow mx-auto h-56 w-auto" />
         </div>
 
         <div className="px-6 pb-8 pt-5">
