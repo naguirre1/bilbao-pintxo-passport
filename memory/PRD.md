@@ -44,3 +44,10 @@ None — no authentication, no backend.
 - `PhotoUploadDialog.tsx`: file picker/cámara, compresión client-side (canvas → jpeg 1280px), nombre opcional. `PhotoWall.tsx`: muro tipo masonry con lightbox (sección `#muro`).
 - Cada foto subida se fija sobre su tarjeta (`.photo-pin`, `data-testid="card-photo-pin-{id}"`) y aparece en el muro. Verificado E2E por captura (subida → archivo servido 200 → aparece en muro y en tarjeta).
 - NOTA: las fotos viven en el disco del pod (`public/photos`); persisten en preview pero se perderían en un redeploy limpio (no hay object storage/DB configurados).
+
+## 2026-09 — Merge de GitHub (despliegue GitHub Pages)
+- Integrados los 6 commits de `origin/main` (naguirre1/bilbao-pintxo-passport) que configuran despliegue estático en GitHub Pages, conservando nuestras features (sellos ilustrados + retos con foto). Merge sin conflictos (commit 44f8de0).
+- Nuevos archivos: `.github/workflows/deploy.yml` (Action → build con Bun → deploy a Pages), `index.html` + `src/entry-client.tsx` (entrada SPA client-only con `basepath = BASE_URL`), `vite.config.pages.ts` (build SPA, base `/bilbao-pintxo-passport/`).
+- `getAssetUrl(path)` usa `import.meta.env.BASE_URL` para prefijar todas las imágenes `/ill/*` (y el sello). En dev BASE_URL=`/` → sin cambios en preview. `vite.config.ts` añade base/ssr condicionales (solo activos en producción/MODE=spa), preview SSR intacto.
+- `package.json`: `build`→pages, `build:ssr`→SSR original, `preview`→pages.
+- ⚠️ IMPORTANTE: GitHub Pages es ESTÁTICO. Las server functions (`src/lib/photos.ts`) NO funcionan allí → la subida de fotos y el muro solo funcionan en el preview de Emergent (SSR). En la web de Pages, la ruta/sellos/mapa sí funcionan pero el muro estará vacío y "Subir foto" fallará.
