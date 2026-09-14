@@ -230,9 +230,24 @@ function Index() {
                   {stop.price && <span className="absolute right-3 top-3 z-10 rounded-full bg-sun px-2.5 py-1 font-hand text-sm text-primary shadow-sm">{stop.price}</span>}
                   <img src={stop.img} alt={stop.dish} className="h-44 w-full object-contain p-2 transition-transform duration-300 group-hover:scale-105" loading="lazy" />
                   {isVisited && (
-                    <span className="stamp-mark animate-stamp absolute bottom-2 right-3 flex size-16 items-center justify-center rounded-full border-2 border-primary bg-card/70 font-display text-lg text-primary" data-testid={`stamp-badge-${stop.id}`}>
-                      BILBAO
-                    </span>
+                    <div className="ill-stamp animate-stamp" data-ink={stop.color} data-testid={`stamp-badge-${stop.id}`}>
+                      <svg viewBox="0 0 100 100" className="ill-stamp__ring" aria-hidden>
+                        <defs>
+                          <path id={`arc-top-${stop.id}`} d="M 15 50 A 35 35 0 0 1 85 50" />
+                          <path id={`arc-bot-${stop.id}`} d="M 17 53 A 33 33 0 0 0 83 53" />
+                        </defs>
+                        <circle cx="50" cy="50" r="46" className="ill-stamp__disc" />
+                        <circle cx="50" cy="50" r="47" className="ill-stamp__c-outer" />
+                        <circle cx="50" cy="50" r="32" className="ill-stamp__c-inner" />
+                        <text className="ill-stamp__txt">
+                          <textPath href={`#arc-top-${stop.id}`} startOffset="50%" textAnchor="middle">BILBAO</textPath>
+                        </text>
+                        <text className="ill-stamp__txt">
+                          <textPath href={`#arc-bot-${stop.id}`} startOffset="50%" textAnchor="middle">SELLADO</textPath>
+                        </text>
+                      </svg>
+                      <img src={stop.character?.img ?? stop.img} alt="" className="ill-stamp__art" />
+                    </div>
                   )}
                 </div>
 

@@ -33,3 +33,7 @@ None — no authentication, no backend.
 
 ## 2026-06 — Foto Personaje
 - Cada curiosidad con personaje (tarjetas 3 león, 4 txikitera, 5 gigantes, 7 Amatxu, 8 arrantzale, 9 Marijaia) muestra un pequeño retrato redondo (`.character-badge`, `data-testid="character-img-{id}"`) dentro del recuadro. Sin volver a los cromos.
+
+## 2026-06 — Sellos Ilustrados
+- Al sellar una parada, el badge genérico "BILBAO" se sustituye por un sello dibujado tipo tampón: anillo de tinta con el color de la parada, texto arqueado "BILBAO / SELLADO" (SVG textPath) y en el centro el personaje de la parada (o su pintxo si no tiene personaje).
+- Componente en `src/routes/index.tsx` (`.ill-stamp`, `data-testid="stamp-badge-{id}"`), estilos en `src/styles.css` (`.ill-stamp*`, variantes de tinta blue/red/green). Conserva la animación `animate-stamp`. Verificado por captura.
