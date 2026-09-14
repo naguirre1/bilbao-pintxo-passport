@@ -292,3 +292,44 @@
   transition: transform 0.25s ease;
 }
 .group:hover .character-badge { transform: rotate(3deg) scale(1.08); }
+
+/* ---------- photo pin (foto sobre la tarjeta) ---------- */
+.photo-pin {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.6rem;
+  z-index: 20;
+  display: block;
+  width: 4rem;
+  height: 4rem;
+  padding: 0.2rem 0.2rem 0.55rem;
+  background: #fff;
+  border-radius: 3px;
+  transform: rotate(4deg);
+  box-shadow: 0 4px 10px rgba(20, 30, 60, 0.28);
+  transition: transform 0.25s ease;
+}
+.photo-pin:hover { transform: rotate(-2deg) scale(1.08); }
+.photo-pin img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 2px;
+}
+.photo-pin__count {
+  position: absolute;
+  bottom: -0.4rem;
+  left: -0.4rem;
+  display: grid;
+  place-items: center;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  padding: 0 0.3rem;
+  border-radius: 9999px;
+  background: var(--festival);
+  color: #fff;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 0.8rem;
+  border: 2px solid #fff;
+}
+

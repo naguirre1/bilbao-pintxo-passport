@@ -37,3 +37,10 @@ None — no authentication, no backend.
 ## 2026-06 — Sellos Ilustrados
 - Al sellar una parada, el badge genérico "BILBAO" se sustituye por un sello dibujado tipo tampón: anillo de tinta con el color de la parada, texto arqueado "BILBAO / SELLADO" (SVG textPath) y en el centro el personaje de la parada (o su pintxo si no tiene personaje).
 - Componente en `src/routes/index.tsx` (`.ill-stamp`, `data-testid="stamp-badge-{id}"`), estilos en `src/styles.css` (`.ill-stamp*`, variantes de tinta blue/red/green). Conserva la animación `animate-stamp`. Verificado por captura.
+
+## 2026-09 — Retos con foto + Muro de fotos (compartido)
+- Backend ligero con TanStack Start `createServerFn` en `src/lib/photos.ts`: `uploadPhoto` (POST, FormData) guarda la imagen en `public/photos/<id>.jpg` + metadatos en `public/photos/_index.json`; `listPhotos` (GET) las devuelve. Fotos PÚBLICAS, visibles por cualquiera (servidas estáticamente).
+- 3 retos de foto voluntarios con prompts distintos (variedad): card 4 "Txikitero por un día", card 5 "Modo Gigante", card 9 "Pose Marijaia" (campo `photoChallenge` en `src/routes/index.tsx`).
+- `PhotoUploadDialog.tsx`: file picker/cámara, compresión client-side (canvas → jpeg 1280px), nombre opcional. `PhotoWall.tsx`: muro tipo masonry con lightbox (sección `#muro`).
+- Cada foto subida se fija sobre su tarjeta (`.photo-pin`, `data-testid="card-photo-pin-{id}"`) y aparece en el muro. Verificado E2E por captura (subida → archivo servido 200 → aparece en muro y en tarjeta).
+- NOTA: las fotos viven en el disco del pod (`public/photos`); persisten en preview pero se perderían en un redeploy limpio (no hay object storage/DB configurados).

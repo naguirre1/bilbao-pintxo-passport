@@ -1,10 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Check, Compass, Flame, MapPin, PartyPopper, Sparkles, Stamp, Utensils } from "lucide-react";
+import { Camera, Check, Compass, Flame, ImagePlus, MapPin, PartyPopper, Sparkles, Stamp, Utensils } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import RouteMap, { type MapStop } from "@/components/RouteMap";
 import Celebration from "@/components/Celebration";
+import PhotoUploadDialog from "@/components/PhotoUploadDialog";
+import PhotoWall from "@/components/PhotoWall";
+import { listPhotos, type Photo } from "@/lib/photos";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -37,6 +40,7 @@ type Stop = {
   curiosity?: string;
   challenge?: string;
   character?: { img: string; alt: string };
+  photoChallenge?: { title: string; prompt: string };
 };
 
 const PIN: Record<Color, string> = { blue: "#1f5fa6", red: "#cf3b2a", green: "#2f9e5f" };
@@ -46,12 +50,12 @@ const stops: Stop[] = [
   { id: 1, name: "El Globo", handle: "@elglobo.bilbao", dish: "Txangurro gratinado", price: "2,40 €", img: "/ill/txangurro.png", note: "Uno de sus bocados más famosos. El precio de barra puede variar.", maps: "https://www.google.com/maps/search/?api=1&query=El+Globo+Diputacion+8+Bilbao", color: "red", lat: 43.2626, lng: -2.9345, curiosity: "El Casco Viejo son las Siete Calles (Zazpikaleak), el núcleo medieval de la villa del siglo XIV." },
   { id: 2, name: "El Puertito", handle: "@el_puertito", dish: "Ostras al gusto", img: "/ill/ostras.png", note: "Pionero de las ostras en Bilbao y Bizkaia, abierto desde 2013.", maps: "https://www.google.com/maps/search/?api=1&query=El+Puertito+Bilbao", color: "blue", lat: 43.2615, lng: -2.9332, challenge: "Elige una ostra que nunca hayas probado y apunta su origen en el pasaporte." },
   { id: 3, name: "Aitaren", handle: "@aitaren", dish: "Bocado de buey", price: "4,95 €", img: "/ill/buey.png", note: "Casa hermana de Amaren, especializada en carne de buey.", maps: "https://www.google.com/maps/search/?api=1&query=Aitaren+Boulevard+Bilbao", color: "red", lat: 43.2601, lng: -2.9282, curiosity: "San Mamés, 'La Catedral', debe su nombre al santo lanzado a los leones: por eso a los jugadores del Athletic se les llama leones, y el club solo juega con cantera vasca desde 1898.", character: { img: "/ill/leon.png", alt: "León del Athletic" } },
-  { id: 4, name: "Gure Toki", handle: "@guretoki", dish: "Pintxo creativo de temporada", price: "2,90 €", img: "/ill/creativo.png", note: "Barra premiada donde la propuesta cambia con frecuencia.", maps: "https://www.google.com/maps/search/?api=1&query=Gure+Toki+Plaza+Nueva+12+Bilbao", color: "green", lat: 43.2571, lng: -2.9235, curiosity: "El 11 de octubre es el Día del Txikitero: cuadrillas con txapela recorren el Casco Viejo cantando y brindando con pequeños vasos de vino (txikitos).", character: { img: "/ill/txikitero.png", alt: "Txikitera con txapela" } },
-  { id: 5, name: "Sorginzulo", handle: "@sorginzulo_bilbao", dish: "Tortilla de patata", price: "12,95 €", img: "/ill/tortilla.png", note: "Finalista nacional de tortilla y premiado por sus pintxos en Bizkaia.", maps: "https://www.google.com/maps/search/?api=1&query=Sorginzulo+Plaza+Nueva+Bilbao", color: "blue", lat: 43.2570, lng: -2.9240, curiosity: "La Plaza Nueva se inauguró en 1851; los domingos acoge mercado de sellos y pintxos, y por sus soportales desfilan los gigantes y cabezudos al son del txistu.", character: { img: "/ill/gigantes.png", alt: "Gigantes de Bilbao" } },
+  { id: 4, name: "Gure Toki", handle: "@guretoki", dish: "Pintxo creativo de temporada", price: "2,90 €", img: "/ill/creativo.png", note: "Barra premiada donde la propuesta cambia con frecuencia.", maps: "https://www.google.com/maps/search/?api=1&query=Gure+Toki+Plaza+Nueva+12+Bilbao", color: "green", lat: 43.2571, lng: -2.9235, curiosity: "El 11 de octubre es el Día del Txikitero: cuadrillas con txapela recorren el Casco Viejo cantando y brindando con pequeños vasos de vino (txikitos).", character: { img: "/ill/txikitero.png", alt: "Txikitera con txapela" }, photoChallenge: { title: "Txikitero por un día", prompt: "Brinda con tu txikito (vino en vaso pequeño) bien en alto, como una auténtica cuadrilla. ¡Aupa!" } },
+  { id: 5, name: "Sorginzulo", handle: "@sorginzulo_bilbao", dish: "Tortilla de patata", price: "12,95 €", img: "/ill/tortilla.png", note: "Finalista nacional de tortilla y premiado por sus pintxos en Bizkaia.", maps: "https://www.google.com/maps/search/?api=1&query=Sorginzulo+Plaza+Nueva+Bilbao", color: "blue", lat: 43.2570, lng: -2.9240, curiosity: "La Plaza Nueva se inauguró en 1851; los domingos acoge mercado de sellos y pintxos, y por sus soportales desfilan los gigantes y cabezudos al son del txistu.", character: { img: "/ill/gigantes.png", alt: "Gigantes de Bilbao" }, photoChallenge: { title: "Modo Gigante", prompt: "Ponte lo más alto que puedas —de puntillas, a hombros o con los brazos estirados— como los Gigantes de la Plaza Nueva." } },
   { id: 6, name: "La Olla", handle: "@laolladebilbao", dish: "Barra de pintxos clásicos", img: "/ill/clasico.png", note: "Parada en la Plaza Nueva; pregunta por el pintxo del día.", maps: "https://www.google.com/maps/search/?api=1&query=La+Olla+Plaza+Nueva+Bilbao", color: "green", lat: 43.2568, lng: -2.9243, challenge: "Aprende a decir «on egin» (buen provecho) antes de probar el pintxo." },
   { id: 7, name: "La Viña del Ensanche", handle: "@lavinadelensanche", dish: "Foie, hongos y patata", img: "/ill/foie.png", note: "Combinación para buscar en barra; puede depender de la temporada.", maps: "https://www.google.com/maps/search/?api=1&query=La+Vina+del+Ensanche+Diputacion+10+Bilbao", color: "red", lat: 43.2624, lng: -2.9348, curiosity: "La Amatxu de Begoña, patrona de Bizkaia, corona su monte; 'amatxu' significa 'madre' en euskera y su talla data de los siglos XIII–XIV.", character: { img: "/ill/begona.png", alt: "Amatxu de Begoña" } },
   { id: 8, name: "Taberna Basaras", handle: "Casco Viejo", dish: "Anchoa en trainera", img: "/ill/anchoa.png", note: "Taberna histórica desde 1940, célebre por sus anchoas y vinos.", maps: "https://www.google.com/maps/search/?api=1&query=Taberna+Basaras+Pelota+2+Bilbao", color: "blue", lat: 43.2561, lng: -2.9246, curiosity: "Célebre por sus anchoas desde 1940. El traje de arrantzale y sardinera —pañuelo, mandil de rayas y cesta— llena de color los desfiles, herencia de las traineras que competían por llegar antes a puerto.", character: { img: "/ill/arrantzale.png", alt: "Arrantzale y sardinera" } },
-  { id: 9, name: "Gerri Taberna", handle: "Casco Viejo", dish: "Lámina de txuleta con patata", img: "/ill/chuleta.png", note: "Un bocado de txuleta en pleno Casco Viejo.", maps: "https://www.google.com/maps/search/?api=1&query=Gerri+Taberna+Bilbao", color: "red", lat: 43.2556, lng: -2.9232, curiosity: "Marijaia, reina de la Aste Nagusia, preside las fiestas con los brazos en alto desde 1978; la última noche se despide ardiendo sobre la ría entre fuegos artificiales.", character: { img: "/ill/marijaia.png", alt: "Marijaia" } },
+  { id: 9, name: "Gerri Taberna", handle: "Casco Viejo", dish: "Lámina de txuleta con patata", img: "/ill/chuleta.png", note: "Un bocado de txuleta en pleno Casco Viejo.", maps: "https://www.google.com/maps/search/?api=1&query=Gerri+Taberna+Bilbao", color: "red", lat: 43.2556, lng: -2.9232, curiosity: "Marijaia, reina de la Aste Nagusia, preside las fiestas con los brazos en alto desde 1978; la última noche se despide ardiendo sobre la ría entre fuegos artificiales.", character: { img: "/ill/marijaia.png", alt: "Marijaia" }, photoChallenge: { title: "Pose Marijaia", prompt: "Levanta los dos brazos al cielo celebrando como Marijaia en la Aste Nagusia. ¡Gora Bilbo!" } },
   { id: 10, name: "Dumpling+", handle: "Goienkale", dish: "Dumplings caseros", img: "/ill/dumpling.png", note: "Un giro internacional en una de las calles históricas del Casco Viejo.", maps: "https://www.google.com/maps/search/?api=1&query=Dumpling+Goienkale+Bilbao", color: "green", lat: 43.2585, lng: -2.9252, curiosity: "Goienkale (Somera) es una de las siete calles originales de la villa." },
 ];
 
@@ -72,6 +76,8 @@ function Index() {
   const [visited, setVisited] = useState<number[]>([]);
   const [filter, setFilter] = useState<"all" | "pending" | "visited">("all");
   const [showCelebration, setShowCelebration] = useState(false);
+  const [photos, setPhotos] = useState<Photo[]>([]);
+  const [uploadStop, setUploadStop] = useState<Stop | null>(null);
 
   useEffect(() => {
     const saved = window.localStorage.getItem("bilbao-passport-stamps");
@@ -84,6 +90,26 @@ function Index() {
       }
     }
   }, []);
+
+  useEffect(() => {
+    listPhotos().then(setPhotos).catch(() => setPhotos([]));
+  }, []);
+
+  const photosByStop = useMemo(() => {
+    const map = new Map<number, Photo[]>();
+    for (const p of photos) {
+      const list = map.get(p.stopId) ?? [];
+      list.push(p);
+      map.set(p.stopId, list);
+    }
+    return map;
+  }, [photos]);
+
+  const stopName = (id: number) => stops.find((s) => s.id === id)?.name ?? "Bilbao";
+
+  const handleUploaded = (photo: Photo) => {
+    setPhotos((current) => [photo, ...current]);
+  };
 
   const filtered = useMemo(
     () => stops.filter((stop) => filter === "all" || (filter === "visited" ? visited.includes(stop.id) : !visited.includes(stop.id))),
@@ -223,6 +249,7 @@ function Index() {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((stop) => {
             const isVisited = visited.includes(stop.id);
+            const stopPhotos = photosByStop.get(stop.id) ?? [];
             return (
               <article key={stop.id} className="group relative flex flex-col overflow-hidden rounded-2xl border-2 border-border bg-card shadow-sm transition-transform duration-300 hover:-translate-y-1.5 hover:shadow-xl" data-testid={`stop-card-${stop.id}`}>
                 <div className="relative flex h-44 items-center justify-center bg-white">
@@ -248,6 +275,17 @@ function Index() {
                       </svg>
                       <img src={stop.character?.img ?? stop.img} alt="" className="ill-stamp__art" />
                     </div>
+                  )}
+                  {stopPhotos.length > 0 && (
+                    <a
+                      href="#muro"
+                      className="photo-pin"
+                      title={`${stopPhotos.length} foto(s) en el muro`}
+                      data-testid={`card-photo-pin-${stop.id}`}
+                    >
+                      <img src={stopPhotos[0].file} alt={`Foto del reto de ${stopPhotos[0].name}`} />
+                      {stopPhotos.length > 1 && <span className="photo-pin__count">+{stopPhotos.length - 1}</span>}
+                    </a>
                   )}
                 </div>
 
@@ -279,6 +317,35 @@ function Index() {
                     </div>
                   )}
 
+                  {stop.photoChallenge && (
+                    <div className="mt-4 rounded-lg border-2 border-dashed border-primary/35 bg-sun/15 p-3.5" data-testid={`photo-challenge-${stop.id}`}>
+                      <p className="mb-1 flex items-center gap-1.5 text-sm font-extrabold uppercase text-primary">
+                        <Camera className="size-4 text-festival" /> Reto foto · {stop.photoChallenge.title}
+                      </p>
+                      <p className="text-sm leading-relaxed text-ink-soft">{stop.photoChallenge.prompt}</p>
+                      {stopPhotos.length > 0 && (
+                        <div className="mt-3 flex items-center gap-1.5">
+                          <a href="#muro" className="flex -space-x-2" data-testid={`photo-thumbs-${stop.id}`}>
+                            {stopPhotos.slice(0, 4).map((p) => (
+                              <img key={p.id} src={p.file} alt={`Foto de ${p.name}`} className="size-9 rounded-full border-2 border-white object-cover shadow" />
+                            ))}
+                          </a>
+                          <span className="text-xs font-bold text-muted-foreground">
+                            {stopPhotos.length} {stopPhotos.length === 1 ? "foto" : "fotos"}
+                          </span>
+                        </div>
+                      )}
+                      <Button
+                        variant="stamp"
+                        className="mt-3 w-full"
+                        onClick={() => setUploadStop(stop)}
+                        data-testid={`photo-upload-btn-${stop.id}`}
+                      >
+                        <ImagePlus className="size-4" /> Subir mi foto
+                      </Button>
+                    </div>
+                  )}
+
                   <div className="mt-5 flex flex-wrap gap-2 pt-1">
                     <Button variant={isVisited ? "primary" : "stamp"} onClick={() => toggleStamp(stop.id)} data-testid={`stamp-btn-${stop.id}`}>
                       {isVisited ? <Check className="size-4" /> : <Stamp className="size-4" />}
@@ -296,6 +363,9 @@ function Index() {
         {filtered.length === 0 && <p className="rounded-xl border-2 border-dashed border-border bg-card p-10 text-center font-bold">No hay paradas en este filtro.</p>}
       </section>
 
+      {/* ---------------- PHOTO WALL ---------------- */}
+      <PhotoWall photos={photos} stopName={stopName} onAdd={() => setUploadStop(stops.find((s) => s.photoChallenge) ?? stops[0])} />
+
       {/* ---------------- FOOTER ---------------- */}
       <footer className="relative overflow-hidden bg-primary px-5 py-10 text-primary-foreground">
         <div className="absolute inset-0 confetti opacity-15" aria-hidden />
@@ -311,6 +381,12 @@ function Index() {
       </footer>
 
       <Celebration open={showCelebration} onClose={() => setShowCelebration(false)} />
+      <PhotoUploadDialog
+        open={!!uploadStop}
+        onOpenChange={(o) => !o && setUploadStop(null)}
+        stop={uploadStop}
+        onUploaded={handleUploaded}
+      />
     </main>
   );
 }
