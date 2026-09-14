@@ -11,8 +11,17 @@ export default defineConfig({
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
+    // Disable SSR for GitHub Pages builds
+    ssr: process.env.MODE !== 'spa',
   },
   vite: {
+    base: process.env.NODE_ENV === 'production' ? '/bilbao-pintxo-passport/' : '/',
+    build: process.env.MODE === 'spa' ? {
+      outDir: 'dist',
+      rollupOptions: {
+        input: './index.html',
+      },
+    } : undefined,
     server: {
       host: "0.0.0.0",
       port: 3000,

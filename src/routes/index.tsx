@@ -9,6 +9,8 @@ import PhotoUploadDialog from "@/components/PhotoUploadDialog";
 import PhotoWall from "@/components/PhotoWall";
 import { listPhotos, type Photo } from "@/lib/photos";
 
+const getAssetUrl = (path: string) => `${import.meta.env.BASE_URL}${path.startsWith('/') ? path.slice(1) : path}`;
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -134,7 +136,7 @@ function Index() {
       {/* ---------------- HERO ---------------- */}
       <header className="relative isolate bg-primary text-primary-foreground">
         <div className="absolute inset-0 confetti opacity-25" aria-hidden />
-        <img src="/ill/skyline.png" alt="" aria-hidden className="pointer-events-none absolute bottom-0 left-0 z-0 w-full select-none object-cover opacity-90" />
+        <img src={getAssetUrl("/ill/skyline.png")} alt="" aria-hidden className="pointer-events-none absolute bottom-0 left-0 z-0 w-full select-none object-cover opacity-90" />
         <div className="absolute inset-0 bg-gradient-to-b from-primary via-primary/70 to-primary/20" aria-hidden />
 
         <nav className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-5 py-5 lg:px-10">
@@ -167,15 +169,15 @@ function Index() {
 
           <div className="relative hidden h-[420px] lg:block">
             <div className="float-slow absolute right-0 top-0 z-20 w-64 rotate-3 overflow-hidden rounded-2xl border-4 border-white bg-white shadow-2xl">
-              <img src="/ill/marijaia.png" alt="Marijaia, reina de la Aste Nagusia" className="h-64 w-full object-cover" />
+              <img src={getAssetUrl("/ill/marijaia.png")} alt="Marijaia, reina de la Aste Nagusia" className="h-64 w-full object-cover" />
               <p className="bg-primary py-1 text-center font-display text-xl tracking-wide text-primary-foreground">MARIJAIA</p>
             </div>
             <div className="wobble absolute -left-2 bottom-2 z-10 w-44 -rotate-6 overflow-hidden rounded-2xl border-4 border-white bg-white shadow-2xl">
-              <img src="/ill/leon.png" alt="León del Athletic" className="h-44 w-full object-cover" />
+              <img src={getAssetUrl("/ill/leon.png")} alt="León del Athletic" className="h-44 w-full object-cover" />
               <p className="bg-festival py-0.5 text-center font-display text-base tracking-wide text-white">EL LEÓN</p>
             </div>
             <div className="absolute left-40 top-20 z-0 w-40 rotate-2 overflow-hidden rounded-2xl border-4 border-white bg-white shadow-xl">
-              <img src="/ill/txikitero.png" alt="Txikitera con txapela" className="h-40 w-full object-cover" />
+              <img src={getAssetUrl("/ill/txikitero.png")} alt="Txikitera con txapela" className="h-40 w-full object-cover" />
             </div>
           </div>
         </div>
@@ -255,7 +257,7 @@ function Index() {
                 <div className="relative flex h-44 items-center justify-center bg-white">
                   <span className={`absolute left-3 top-3 z-10 flex size-9 items-center justify-center rounded-full font-display text-xl text-white shadow ${ACCENT[stop.color]}`}>{stop.id}</span>
                   {stop.price && <span className="absolute right-3 top-3 z-10 rounded-full bg-sun px-2.5 py-1 font-hand text-sm text-primary shadow-sm">{stop.price}</span>}
-                  <img src={stop.img} alt={stop.dish} className="h-44 w-full object-contain p-2 transition-transform duration-300 group-hover:scale-105" loading="lazy" />
+                  <img src={getAssetUrl(stop.img)} alt={stop.dish} className="h-44 w-full object-contain p-2 transition-transform duration-300 group-hover:scale-105" loading="lazy" />
                   {isVisited && (
                     <div className="ill-stamp animate-stamp" data-ink={stop.color} data-testid={`stamp-badge-${stop.id}`}>
                       <svg viewBox="0 0 100 100" className="ill-stamp__ring" aria-hidden>
@@ -273,7 +275,7 @@ function Index() {
                           <textPath href={`#arc-bot-${stop.id}`} startOffset="50%" textAnchor="middle">SELLADO</textPath>
                         </text>
                       </svg>
-                      <img src={stop.character?.img ?? stop.img} alt="" className="ill-stamp__art" />
+                      <img src={getAssetUrl(stop.character?.img ?? stop.img)} alt="" className="ill-stamp__art" />
                     </div>
                   )}
                   {stopPhotos.length > 0 && (
@@ -301,7 +303,7 @@ function Index() {
                     <div className={`mt-4 flex gap-3 rounded-lg p-3.5 text-sm leading-relaxed ${stop.challenge ? "bg-festival/10" : "bg-secondary"}`}>
                       {stop.character && (
                         <img
-                          src={stop.character.img}
+                          src={getAssetUrl(stop.character.img)}
                           alt={stop.character.alt}
                           title={stop.character.alt}
                           className="character-badge"
@@ -375,7 +377,7 @@ function Index() {
             <p className="mt-1 text-xs font-semibold text-primary-foreground/80">Come, camina, pregunta y cuida la ciudad. On egin! · Aupa!</p>
           </div>
           <div className="w-28 -rotate-3 overflow-hidden rounded-xl border-4 border-white bg-white shadow-lg">
-            <img src="/ill/gigantes.png" alt="Gigantes de Bilbao" className="h-28 w-full object-cover" />
+            <img src={getAssetUrl("/ill/gigantes.png")} alt="Gigantes de Bilbao" className="h-28 w-full object-cover" />
           </div>
         </div>
       </footer>
