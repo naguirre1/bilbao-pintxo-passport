@@ -13,6 +13,7 @@ export default defineConfig({
     server: { entry: "server" },
   },
   vite: {
+    base: process.env.NODE_ENV === 'production' ? '/bilbao-pintxo-passport/' : '/',
     server: {
       host: "0.0.0.0",
       port: 3000,
