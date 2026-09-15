@@ -392,7 +392,7 @@ function Index() {
       </section>
 
       {/* ---------------- PHOTO WALL ---------------- */}
-      <PhotoWall photos={photos} stopName={stopName} onAdd={() => setUploadStop(stops.find((s) => s.photoChallenge) ?? stops[0])} />
+      <PhotoWall photos={photos} stopName={stopName} onAdd={() => setUploadStop(stops.find((s) => s.photoChallenge) ?? stops[0] ?? null)} />
 
       {/* ---------------- FOOTER ---------------- */}
       <footer className="relative overflow-hidden bg-primary px-5 py-10 text-primary-foreground">
