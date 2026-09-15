@@ -139,6 +139,7 @@ function Index() {
   };
 
   return (
+    <>
     <main className="min-h-screen overflow-hidden bg-background paper-texture">
       {/* ---------------- HERO ---------------- */}
       <header className="relative isolate bg-primary text-primary-foreground">
@@ -414,14 +415,15 @@ function Index() {
 
       <Celebration open={showCelebration} onClose={() => setShowCelebration(false)} />
       <TeamChallengeDialog open={teamOpen} onOpenChange={setTeamOpen} />
-      {uploadStop && (
-        <PhotoUploadDialog
-          open={true}
-          onOpenChange={(o) => !o && setUploadStop(null)}
-          stop={uploadStop}
-          onUploaded={handleUploaded}
-        />
-      )}
     </main>
+    {uploadStop && (
+      <PhotoUploadDialog
+        open={true}
+        onOpenChange={(o) => !o && setUploadStop(null)}
+        stop={uploadStop}
+        onUploaded={handleUploaded}
+      />
+    )}
+    </>
   );
 }
