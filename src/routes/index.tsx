@@ -167,7 +167,7 @@ function Index() {
               <Button asChild variant="secondary" data-testid="cta-start">
                 <a href="#paradas"><Utensils className="size-4" /> Empezar la ruta</a>
               </Button>
-              <Button asChild variant="stamp" className="!text-primary-foreground !border-primary-foreground/60 hover:!bg-primary-foreground hover:!text-primary" data-testid="cta-map">
+              <Button asChild variant="secondary" data-testid="cta-map">
                 <a href="#mapa"><MapPin className="size-4" /> Ver el mapa</a>
               </Button>
             </div>
