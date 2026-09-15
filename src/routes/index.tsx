@@ -288,7 +288,7 @@ function Index() {
                       title={`${stopPhotos.length} foto(s) en el muro`}
                       data-testid={`card-photo-pin-${stop.id}`}
                     >
-                      <img src={stopPhotos[0].file} alt={`Foto del reto de ${stopPhotos[0].name}`} />
+                      <img src={stopPhotos[0]?.file} alt={`Foto del reto de ${stopPhotos[0]?.name ?? stop.name}`} />
                       {stopPhotos.length > 1 && <span className="photo-pin__count">+{stopPhotos.length - 1}</span>}
                     </a>
                   )}
