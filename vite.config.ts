@@ -6,22 +6,28 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
+const isSpa = process.env['MODE'] === "spa";
+
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
     // Disable SSR for GitHub Pages builds
-    ssr: process.env.MODE !== 'spa',
+    ssr: !isSpa,
   },
   vite: {
-    base: process.env.NODE_ENV === 'production' ? '/bilbao-pintxo-passport/' : '/',
-    build: process.env.MODE === 'spa' ? {
-      outDir: 'dist',
-      rollupOptions: {
-        input: './index.html',
-      },
-    } : undefined,
+    base: process.env['NODE_ENV'] === "production" ? "/bilbao-pintxo-passport/" : "/",
+    ...(isSpa
+      ? {
+          build: {
+            outDir: "dist",
+            rollupOptions: {
+              input: "./index.html",
+            },
+          },
+        }
+      : {}),
     server: {
       host: "0.0.0.0",
       port: 3000,
