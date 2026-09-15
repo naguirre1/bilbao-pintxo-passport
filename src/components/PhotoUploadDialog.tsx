@@ -64,8 +64,6 @@ async function compressToDataUrl(file: File): Promise<string> {
 }
 
 export default function PhotoUploadDialog({ open, onOpenChange, stop, onUploaded }: Props) {
-  if (!stop || !open) return null;
-
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -74,6 +72,8 @@ export default function PhotoUploadDialog({ open, onOpenChange, stop, onUploaded
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!open) return;
+
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onOpenChange(false);
     };
@@ -83,7 +83,9 @@ export default function PhotoUploadDialog({ open, onOpenChange, stop, onUploaded
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
-  }, [onOpenChange]);
+  }, [open, onOpenChange]);
+
+  if (!stop || !open) return null;
 
   const reset = () => {
     setFile(null);
