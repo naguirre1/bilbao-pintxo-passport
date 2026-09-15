@@ -1,14 +1,7 @@
 import { useEffect, useState } from "react";
-import { Dices, PartyPopper, RefreshCw, UserRound } from "lucide-react";
+import { Dices, PartyPopper, RefreshCw, UserRound, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
 export const TEAM_RETOS = [
   "Consigue que alguien cuente un chiste.",
@@ -39,25 +32,55 @@ export default function TeamChallengeDialog({
   const [reto, setReto] = useState<string>(FALLBACK_RETO);
 
   useEffect(() => {
-    if (open) {
-      setPerson(1);
-      setReto(pick());
-    }
-  }, [open]);
+    if (!open) return;
+
+    setPerson(1);
+    setReto(pick());
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onOpenChange(false);
+    };
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [open, onOpenChange]);
+
+  if (!open) return null;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md overflow-hidden rounded-2xl border-2 border-festival/40 p-0" data-testid="team-challenge-dialog">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      data-testid="team-challenge-dialog"
+    >
+      <div
+        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+        onClick={() => onOpenChange(false)}
+      />
+
+      <div className="relative z-10 w-full max-w-md overflow-hidden rounded-2xl border-2 border-festival/40 bg-background shadow-2xl">
+        <button
+          onClick={() => onOpenChange(false)}
+          className="absolute right-4 top-4 z-10 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100"
+          aria-label="Cerrar"
+        >
+          <X className="h-4 w-4 text-festival-foreground" />
+        </button>
+
         <div className="relative bg-festival px-6 pb-4 pt-6 text-festival-foreground">
           <div className="absolute inset-0 confetti opacity-20" aria-hidden />
-          <DialogHeader className="relative">
-            <DialogTitle className="flex items-center gap-2 font-display text-3xl tracking-wide">
+          <div className="relative">
+            <h2 className="flex items-center gap-2 font-display text-3xl tracking-wide">
               <Dices className="size-7" /> Reto sorpresa de cuadrilla
-            </DialogTitle>
-            <DialogDescription className="font-semibold text-festival-foreground/90">
+            </h2>
+            <p className="mt-2 text-sm font-semibold text-festival-foreground/90">
               Pasaos el móvil: a cada persona le toca el suyo. ¡A por ellos!
-            </DialogDescription>
-          </DialogHeader>
+            </p>
+          </div>
         </div>
 
         <div className="px-6 py-6">
@@ -94,7 +117,7 @@ export default function TeamChallengeDialog({
             </Button>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 }
