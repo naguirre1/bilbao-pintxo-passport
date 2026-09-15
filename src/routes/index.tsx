@@ -343,7 +343,10 @@ function Index() {
                       <Button
                         variant="stamp"
                         className="mt-3 w-full"
-                        onClick={() => setUploadStop(stop)}
+                        onClick={() => {
+                          console.log('Click en Subir mi foto, stop:', stop.id, stop.name);
+                          setUploadStop(stop);
+                        }}
                         data-testid={`photo-upload-btn-${stop.id}`}
                       >
                         <ImagePlus className="size-4" /> Subir mi foto

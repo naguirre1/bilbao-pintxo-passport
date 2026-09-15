@@ -71,6 +71,7 @@ async function compressToDataUrl(file: File): Promise<string> {
 }
 
 export default function PhotoUploadDialog({ open, onOpenChange, stop, onUploaded }: Props) {
+  console.log('PhotoUploadDialog render, open:', open, 'stop:', stop?.id);
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -87,6 +88,7 @@ export default function PhotoUploadDialog({ open, onOpenChange, stop, onUploaded
   };
 
   const pick = (f: File | undefined) => {
+    console.log('pick llamado con file:', f?.name, f?.size);
     if (!f) return;
     setError(null);
     setFile(f);
