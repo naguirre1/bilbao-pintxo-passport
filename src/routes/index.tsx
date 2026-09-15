@@ -100,6 +100,10 @@ function Index() {
     listPhotos().then(setPhotos).catch(() => setPhotos([]));
   }, []);
 
+  useEffect(() => {
+    console.log('uploadStop cambió a:', uploadStop?.id, uploadStop?.name);
+  }, [uploadStop]);
+
   const photosByStop = useMemo(() => {
     const map = new Map<number, Photo[]>();
     for (const p of photos) {
@@ -344,9 +348,9 @@ function Index() {
                         variant="stamp"
                         className="mt-3 w-full"
                         onClick={() => {
-                          alert(`Click en parada ${stop.id}: ${stop.name}`);
                           console.log('Click en Subir mi foto, stop:', stop.id, stop.name);
                           setUploadStop(stop);
+                          console.log('setUploadStop ejecutado');
                         }}
                         data-testid={`photo-upload-btn-${stop.id}`}
                       >
@@ -410,12 +414,14 @@ function Index() {
 
       <Celebration open={showCelebration} onClose={() => setShowCelebration(false)} />
       <TeamChallengeDialog open={teamOpen} onOpenChange={setTeamOpen} />
-      <PhotoUploadDialog
-        open={!!uploadStop}
-        onOpenChange={(o) => !o && setUploadStop(null)}
-        stop={uploadStop}
-        onUploaded={handleUploaded}
-      />
+      {uploadStop && (
+        <PhotoUploadDialog
+          open={true}
+          onOpenChange={(o) => !o && setUploadStop(null)}
+          stop={uploadStop}
+          onUploaded={handleUploaded}
+        />
+      )}
     </main>
   );
 }
