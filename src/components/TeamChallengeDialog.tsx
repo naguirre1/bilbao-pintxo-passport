@@ -36,7 +36,7 @@ export default function TeamChallengeDialog({
   onOpenChange: (open: boolean) => void;
 }) {
   const [person, setPerson] = useState(1);
-  const [reto, setReto] = useState<string>(TEAM_RETOS[0]);
+  const [reto, setReto] = useState<string>(FALLBACK_RETO);
 
   useEffect(() => {
     if (open) {
