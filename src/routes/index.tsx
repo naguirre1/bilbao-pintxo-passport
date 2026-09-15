@@ -100,10 +100,6 @@ function Index() {
     listPhotos().then(setPhotos).catch(() => setPhotos([]));
   }, []);
 
-  useEffect(() => {
-    console.log('uploadStop cambió a:', uploadStop?.id, uploadStop?.name);
-  }, [uploadStop]);
-
   const photosByStop = useMemo(() => {
     const map = new Map<number, Photo[]>();
     for (const p of photos) {
@@ -348,11 +344,7 @@ function Index() {
                       <Button
                         variant="stamp"
                         className="mt-3 w-full"
-                        onClick={() => {
-                          console.log('Click en Subir mi foto, stop:', stop.id, stop.name);
-                          setUploadStop(stop);
-                          console.log('setUploadStop ejecutado');
-                        }}
+                        onClick={() => setUploadStop(stop)}
                         data-testid={`photo-upload-btn-${stop.id}`}
                       >
                         <ImagePlus className="size-4" /> Subir mi foto

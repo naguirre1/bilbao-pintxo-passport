@@ -71,12 +71,7 @@ async function compressToDataUrl(file: File): Promise<string> {
 }
 
 export default function PhotoUploadDialog({ open, onOpenChange, stop, onUploaded }: Props) {
-  console.log('PhotoUploadDialog render, open:', open, 'stop:', stop?.id);
-
-  if (!stop) {
-    console.log('PhotoUploadDialog: stop is null, returning null');
-    return null;
-  }
+  if (!stop) return null;
 
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -94,7 +89,6 @@ export default function PhotoUploadDialog({ open, onOpenChange, stop, onUploaded
   };
 
   const pick = (f: File | undefined) => {
-    console.log('pick llamado con file:', f?.name, f?.size);
     if (!f) return;
     setError(null);
     setFile(f);
@@ -106,12 +100,8 @@ export default function PhotoUploadDialog({ open, onOpenChange, stop, onUploaded
     setBusy(true);
     setError(null);
     try {
-      console.log('Comprimiendo imagen...');
       const dataUrl = await compressToDataUrl(file);
-      console.log('Imagen comprimida, tamaño:', dataUrl.length);
-      console.log('Subiendo a Firebase...');
       const photo = await uploadPhoto(dataUrl, stop.id, name);
-      console.log('Foto subida con éxito:', photo.id);
       onUploaded(photo);
       reset();
       onOpenChange(false);
@@ -122,48 +112,15 @@ export default function PhotoUploadDialog({ open, onOpenChange, stop, onUploaded
     }
   };
 
-  console.log('PhotoUploadDialog: About to render Dialog component');
-
-  // Test: render a simple div first to see if it appears
-  if (true) {
-    console.log('Rendering TEST overlay');
-    return (
-      <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0,0,0,0.8)',
-          zIndex: 9999,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'white',
-          fontSize: 24,
-          padding: 20
-        }}
-        onClick={() => onOpenChange(false)}
-      >
-        TEST: Dialog está funcionando! Click para cerrar.
-        <br/>
-        Stop: {stop.name}
-      </div>
-    );
-  }
-
-  try {
-    return (
-      <Dialog
-        open={open}
-        onOpenChange={(o) => {
-          console.log('Dialog onOpenChange called with:', o);
-          if (!o) reset();
-          onOpenChange(o);
-        }}
-      >
-        <DialogContent className="max-w-md rounded-2xl border-2 border-primary/25" data-testid="upload-dialog">
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(o) => {
+        if (!o) reset();
+        onOpenChange(o);
+      }}
+    >
+      <DialogContent className="max-w-md rounded-2xl border-2 border-primary/25" data-testid="upload-dialog">
         <DialogHeader>
           <DialogTitle className="font-display text-3xl tracking-wide text-primary">
             {stop?.photoChallenge?.title ?? "Sube tu foto"}
@@ -235,11 +192,5 @@ export default function PhotoUploadDialog({ open, onOpenChange, stop, onUploaded
         </p>
       </DialogContent>
     </Dialog>
-    );
-  } catch (error) {
-    console.error('PhotoUploadDialog render error:', error);
-    return <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', color: 'white', padding: 20, zIndex: 9999 }}>
-      Error rendering dialog: {String(error)}
-    </div>;
-  }
+  );
 }
