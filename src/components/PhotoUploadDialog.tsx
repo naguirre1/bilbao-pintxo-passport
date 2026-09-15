@@ -98,12 +98,17 @@ export default function PhotoUploadDialog({ open, onOpenChange, stop, onUploaded
     setBusy(true);
     setError(null);
     try {
+      console.log('Comprimiendo imagen...');
       const dataUrl = await compressToDataUrl(file);
+      console.log('Imagen comprimida, tamaño:', dataUrl.length);
+      console.log('Subiendo a Firebase...');
       const photo = await uploadPhoto(dataUrl, stop.id, name);
+      console.log('Foto subida con éxito:', photo.id);
       onUploaded(photo);
       reset();
       onOpenChange(false);
     } catch (e) {
+      console.error('Error al subir foto:', e);
       setError(e instanceof Error ? e.message : "No se pudo subir la foto");
       setBusy(false);
     }

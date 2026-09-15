@@ -46,8 +46,16 @@ export async function listPhotos(): Promise<Photo[]> {
 }
 
 export async function uploadPhoto(image: string, stopId: number, name: string): Promise<Photo> {
+  console.log('uploadPhoto llamado con:', { stopId, name, imageSize: image.length });
   const createdAt = new Date().toISOString();
   const clean = (name.trim() || "Anónimo/a").slice(0, 40);
-  const ref = await addDoc(collection(db, "photos"), { stopId, name: clean, image, createdAt });
-  return { id: ref.id, stopId, name: clean, file: image, createdAt };
+  try {
+    console.log('Intentando addDoc a Firestore...');
+    const ref = await addDoc(collection(db, "photos"), { stopId, name: clean, image, createdAt });
+    console.log('addDoc exitoso, ref.id:', ref.id);
+    return { id: ref.id, stopId, name: clean, file: image, createdAt };
+  } catch (error) {
+    console.error('Error en addDoc:', error);
+    throw error;
+  }
 }
