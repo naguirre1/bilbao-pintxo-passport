@@ -1,15 +1,8 @@
-import { useRef, useState } from "react";
-import { Camera, ImageUp, Loader2, Send } from "lucide-react";
+import { useRef, useState, useEffect } from "react";
+import { Camera, ImageUp, Loader2, Send, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { uploadPhoto, type Photo } from "@/lib/firebase";
 
 type Props = {
@@ -71,7 +64,7 @@ async function compressToDataUrl(file: File): Promise<string> {
 }
 
 export default function PhotoUploadDialog({ open, onOpenChange, stop, onUploaded }: Props) {
-  if (!stop) return null;
+  if (!stop || !open) return null;
 
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -79,6 +72,18 @@ export default function PhotoUploadDialog({ open, onOpenChange, stop, onUploaded
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onOpenChange(false);
+    };
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [onOpenChange]);
 
   const reset = () => {
     setFile(null);
@@ -112,23 +117,40 @@ export default function PhotoUploadDialog({ open, onOpenChange, stop, onUploaded
     }
   };
 
+  const handleClose = () => {
+    reset();
+    onOpenChange(false);
+  };
+
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(o) => {
-        if (!o) reset();
-        onOpenChange(o);
-      }}
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      data-testid="upload-dialog"
     >
-      <DialogContent className="max-w-md rounded-2xl border-2 border-primary/25" data-testid="upload-dialog">
-        <DialogHeader>
-          <DialogTitle className="font-display text-3xl tracking-wide text-primary">
+      <div
+        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+        onClick={handleClose}
+      />
+
+      <div className="relative z-10 w-full max-w-md rounded-2xl border-2 border-primary/25 bg-background p-6 shadow-2xl">
+        <button
+          onClick={handleClose}
+          className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100"
+          aria-label="Cerrar"
+        >
+          <X className="h-4 w-4" />
+        </button>
+
+        <div className="mb-6">
+          <h2 className="font-display text-3xl tracking-wide text-primary">
             {stop?.photoChallenge?.title ?? "Sube tu foto"}
-          </DialogTitle>
-          <DialogDescription className="font-semibold text-ink-soft">
+          </h2>
+          <p className="mt-2 text-sm font-semibold text-ink-soft">
             {stop?.photoChallenge?.prompt}
-          </DialogDescription>
-        </DialogHeader>
+          </p>
+        </div>
 
         <input
           ref={inputRef}
@@ -144,7 +166,7 @@ export default function PhotoUploadDialog({ open, onOpenChange, stop, onUploaded
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            className="group relative overflow-hidden rounded-xl border-2 border-primary/20"
+            className="group relative mb-4 w-full overflow-hidden rounded-xl border-2 border-primary/20"
             data-testid="upload-preview"
           >
             <img src={preview} alt="Vista previa" className="max-h-64 w-full object-cover" />
@@ -156,7 +178,7 @@ export default function PhotoUploadDialog({ open, onOpenChange, stop, onUploaded
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/40 bg-secondary/50 py-10 font-bold text-primary transition-colors hover:bg-secondary"
+            className="mb-4 flex w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/40 bg-secondary/50 py-10 font-bold text-primary transition-colors hover:bg-secondary"
             data-testid="upload-pick-btn"
           >
             <Camera className="size-8" />
@@ -169,11 +191,12 @@ export default function PhotoUploadDialog({ open, onOpenChange, stop, onUploaded
           onChange={(e) => setName(e.target.value)}
           placeholder="Tu nombre o cuadrilla (opcional)"
           maxLength={40}
+          className="mb-4"
           data-testid="upload-name-input"
         />
 
         {error && (
-          <p className="text-sm font-bold text-festival" data-testid="upload-error">
+          <p className="mb-4 text-sm font-bold text-festival" data-testid="upload-error">
             {error}
           </p>
         )}
@@ -182,15 +205,17 @@ export default function PhotoUploadDialog({ open, onOpenChange, stop, onUploaded
           variant="primary"
           disabled={!file || busy}
           onClick={submit}
+          className="mb-4 w-full"
           data-testid="upload-submit-btn"
         >
           {busy ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
           {busy ? "Subiendo..." : "Compartir en el muro"}
         </Button>
+
         <p className="flex items-center justify-center gap-1.5 text-center text-xs font-semibold text-muted-foreground">
           <ImageUp className="size-3.5" /> Tu foto será pública en el muro de la ruta.
         </p>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 }
