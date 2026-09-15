@@ -344,6 +344,7 @@ function Index() {
                         variant="stamp"
                         className="mt-3 w-full"
                         onClick={() => {
+                          alert(`Click en parada ${stop.id}: ${stop.name}`);
                           console.log('Click en Subir mi foto, stop:', stop.id, stop.name);
                           setUploadStop(stop);
                         }}
