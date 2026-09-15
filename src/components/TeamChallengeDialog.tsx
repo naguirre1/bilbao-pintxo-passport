@@ -19,11 +19,13 @@ export const TEAM_RETOS = [
   "Consigue que alguien te cuente su anécdota más vergonzosa en un bar.",
 ];
 
+const FALLBACK_RETO = TEAM_RETOS[0] ?? "Haz un brindis con tu cuadrilla.";
+
 function pick(prev?: string): string {
-  if (TEAM_RETOS.length <= 1) return TEAM_RETOS[0];
+  if (TEAM_RETOS.length <= 1) return FALLBACK_RETO;
   let r = prev;
   while (r === prev) r = TEAM_RETOS[Math.floor(Math.random() * TEAM_RETOS.length)];
-  return r as string;
+  return r ?? FALLBACK_RETO;
 }
 
 export default function TeamChallengeDialog({
@@ -34,7 +36,7 @@ export default function TeamChallengeDialog({
   onOpenChange: (open: boolean) => void;
 }) {
   const [person, setPerson] = useState(1);
-  const [reto, setReto] = useState<string>(TEAM_RETOS[0]);
+  const [reto, setReto] = useState<string>(FALLBACK_RETO);
 
   useEffect(() => {
     if (open) {

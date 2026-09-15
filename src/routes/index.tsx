@@ -288,7 +288,7 @@ function Index() {
                       title={`${stopPhotos.length} foto(s) en el muro`}
                       data-testid={`card-photo-pin-${stop.id}`}
                     >
-                      <img src={stopPhotos[0].file} alt={`Foto del reto de ${stopPhotos[0].name}`} />
+                      <img src={stopPhotos[0]?.file} alt={`Foto del reto de ${stopPhotos[0]?.name ?? stop.name}`} />
                       {stopPhotos.length > 1 && <span className="photo-pin__count">+{stopPhotos.length - 1}</span>}
                     </a>
                   )}
@@ -392,7 +392,7 @@ function Index() {
       </section>
 
       {/* ---------------- PHOTO WALL ---------------- */}
-      <PhotoWall photos={photos} stopName={stopName} onAdd={() => setUploadStop(stops.find((s) => s.photoChallenge) ?? stops[0])} />
+      <PhotoWall photos={photos} stopName={stopName} onAdd={() => setUploadStop(stops.find((s) => s.photoChallenge) ?? stops[0] ?? null)} />
 
       {/* ---------------- FOOTER ---------------- */}
       <footer className="relative overflow-hidden bg-primary px-5 py-10 text-primary-foreground">

@@ -15,7 +15,7 @@ function useConfetti(n: number): Piece[] {
         delay: Math.random() * 0.9,
         duration: 2.6 + Math.random() * 2.4,
         size: 7 + Math.random() * 9,
-        color: COLORS[i % COLORS.length],
+        color: COLORS[i % COLORS.length] ?? "#1f5fa6",
         round: Math.random() > 0.6,
       })),
     [n],

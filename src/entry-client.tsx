@@ -22,14 +22,14 @@ declare module "@tanstack/react-router" {
 }
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
-  state = { hasError: false };
+  override state = { hasError: false };
   static getDerivedStateFromError() {
     return { hasError: true };
   }
-  componentDidCatch(error: unknown) {
+  override componentDidCatch(error: unknown) {
     console.error(error);
   }
-  render() {
+  override render() {
     if (this.state.hasError) {
       return (
         <div
