@@ -26,10 +26,10 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
   static getDerivedStateFromError() {
     return { hasError: true };
   }
-  componentDidCatch(error: unknown) {
+  override componentDidCatch(error: unknown) {
     console.error(error);
   }
-  render() {
+  override render() {
     if (this.state.hasError) {
       return (
         <div
