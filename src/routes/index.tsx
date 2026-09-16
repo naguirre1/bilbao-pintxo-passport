@@ -53,7 +53,7 @@ const ACCENT: Record<Color, string> = { blue: "bg-primary", red: "bg-festival", 
 const STAMPS_KEY = "bilbao-passport-stamps-v2";
 
 const stops: Stop[] = [
-  { id: 1, name: "El Globo", handle: "@elglobo.bilbao", dish: "Txangurro gratinado", price: "2,40 €", img: "/ill/txangurro.png", note: "Uno de sus bocados más famosos. El precio de barra puede variar.", maps: "https://www.google.com/maps/search/?api=1&query=El+Globo+Diputacion+8+Bilbao", color: "red", lat: 43.2626, lng: -2.9345, curiosity: "El Casco Viejo son las Siete Calles (Zazpikaleak), el núcleo medieval de la villa del siglo XIV." },
+  { id: 1, name: "El Globo", handle: "@elglobo.bilbao", dish: "Txangurro gratinado", price: "2,40 €", img: "/ill/txangurro.png", note: "Uno de sus bocados más famosos. El precio de barra puede variar.", maps: "https://www.google.com/maps/search/?api=1&query=El+Globo+Diputacion+8+Bilbao", color: "red", lat: 43.2626, lng: -2.9345, curiosity: "El Casco Viejo son las Siete Calles (Zazpikaleak), el núcleo medieval de la villa del siglo XIV:\n\n• Somera (Goienkale): La calle de arriba.\n• Artekale: La calle del medio.\n• Tendería (Dendarikale): La calle de las tiendas y el comercio.\n• Belostikale: La calle de la pluma o del pescado.\n• Carnicería Vieja (Harategi Zahar): Zona del primer matadero municipal.\n• Barrenkale: La calle de abajo.\n• Barrenkale Barrena: La calle de más abajo (la más próxima a la ría)." },
   { id: 2, name: "La Viña del Ensanche", handle: "@lavinadelensanche", dish: "Foie, hongos y patata", img: "/ill/foie.png", note: "Combinación para buscar en barra; puede depender de la temporada.", maps: "https://www.google.com/maps/search/?api=1&query=La+Vina+del+Ensanche+Diputacion+10+Bilbao", color: "red", lat: 43.2624, lng: -2.9348, curiosity: "La Amatxu de Begoña, patrona de Bizkaia, corona su monte; 'amatxu' significa 'madre' en euskera y su talla data de los siglos XIII–XIV.", character: { img: "/ill/begona.png", alt: "Amatxu de Begoña" } },
   { id: 3, name: "El Puertito", handle: "@el_puertito", dish: "Ostras al gusto", img: "/ill/ostras.png", note: "Pionero de las ostras en Bilbao y Bizkaia, abierto desde 2013.", maps: "https://www.google.com/maps/search/?api=1&query=El+Puertito+Bilbao", color: "blue", lat: 43.2615, lng: -2.9332, challenge: "Elige una ostra que nunca hayas probado y apunta su origen en el pasaporte." },
   { id: 4, name: "Aitaren", handle: "@aitaren", dish: "Bocado de buey", price: "4,95 €", img: "/ill/buey.png", note: "Casa hermana de Amaren, especializada en carne de buey.", maps: "https://www.google.com/maps/search/?api=1&query=Aitaren+Boulevard+Bilbao", color: "red", lat: 43.2601, lng: -2.9282, curiosity: "San Mamés, 'La Catedral', debe su nombre al santo lanzado a los leones: por eso a los jugadores del Athletic se les llama leones, y el club solo juega con cantera vasca desde 1898.", character: { img: "/ill/leon.png", alt: "León del Athletic" } },
@@ -320,7 +320,7 @@ function Index() {
                         <p className="mb-1 flex items-center gap-1.5 font-extrabold uppercase text-primary">
                           {stop.challenge ? <><Flame className="size-4 text-festival" /> Reto</> : <><Sparkles className="size-4" /> Curiosidad</>}
                         </p>
-                        {stop.challenge ?? stop.curiosity}
+                        <p className="whitespace-pre-line">{stop.challenge ?? stop.curiosity}</p>
                       </div>
                     </div>
                   )}
