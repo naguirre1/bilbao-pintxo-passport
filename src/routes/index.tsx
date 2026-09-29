@@ -143,7 +143,7 @@ function Index() {
       <header className="relative isolate bg-primary text-primary-foreground">
         <div className="absolute inset-0 z-0 confetti opacity-25" aria-hidden />
         <div className="absolute inset-0 z-[1] bg-gradient-to-b from-primary via-primary/70 to-transparent" aria-hidden />
-        <img src={getAssetUrl("/ill/skyline.png")} alt="" aria-hidden className="pointer-events-none absolute bottom-0 left-0 z-[2] w-full select-none object-cover" />
+        <img src={getAssetUrl("/ill/skyline.png")} alt="" aria-hidden className="pointer-events-none absolute bottom-0 left-0 z-[2] h-40 w-full select-none object-contain object-bottom sm:h-52 lg:h-64" />
 
         <nav className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-5 py-5 lg:px-10">
           <span className="font-display text-2xl tracking-wide" data-testid="brand">EXPLORANDO BILBAO</span>
