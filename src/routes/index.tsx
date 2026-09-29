@@ -307,8 +307,8 @@ function Index() {
                   <p className="mt-2 flex items-center gap-2 text-base font-extrabold text-primary"><Utensils className="size-4 shrink-0" /> {stop.dish}</p>
                   <p className="mt-2 text-sm leading-relaxed text-ink-soft">{stop.note}</p>
 
-                  {(stop.curiosity || stop.challenge) && (
-                    <div className={`mt-4 flex gap-3 rounded-lg p-3.5 text-sm leading-relaxed ${stop.challenge ? "bg-festival/10" : "bg-secondary"}`}>
+                  {stop.challenge && (
+                    <div className="mt-4 flex gap-3 rounded-lg bg-festival/10 p-3.5 text-sm leading-relaxed">
                       {stop.character && (
                         <img
                           src={getAssetUrl(stop.character.img)}
@@ -320,9 +320,29 @@ function Index() {
                       )}
                       <div className="min-w-0 flex-1">
                         <p className="mb-1 flex items-center gap-1.5 font-extrabold uppercase text-primary">
-                          {stop.challenge ? <><Flame className="size-4 text-festival" /> Reto</> : <><Sparkles className="size-4" /> Curiosidad</>}
+                          <Flame className="size-4 text-festival" /> Reto
                         </p>
-                        <p className="whitespace-pre-line">{stop.challenge ?? stop.curiosity}</p>
+                        <p className="whitespace-pre-line">{stop.challenge}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {stop.curiosity && (
+                    <div className="mt-4 flex gap-3 rounded-lg bg-secondary p-3.5 text-sm leading-relaxed">
+                      {!stop.challenge && stop.character && (
+                        <img
+                          src={getAssetUrl(stop.character.img)}
+                          alt={stop.character.alt}
+                          title={stop.character.alt}
+                          className="character-badge"
+                          data-testid={`character-img-${stop.id}`}
+                        />
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className="mb-1 flex items-center gap-1.5 font-extrabold uppercase text-primary">
+                          <Sparkles className="size-4" /> Curiosidad
+                        </p>
+                        <p className="whitespace-pre-line">{stop.curiosity}</p>
                       </div>
                     </div>
                   )}
