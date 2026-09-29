@@ -141,9 +141,9 @@ function Index() {
     <main className="min-h-screen overflow-hidden bg-background paper-texture">
       {/* ---------------- HERO ---------------- */}
       <header className="relative isolate bg-primary text-primary-foreground">
-        <div className="absolute inset-0 confetti opacity-25" aria-hidden />
-        <img src={getAssetUrl("/ill/skyline.png")} alt="" aria-hidden className="pointer-events-none absolute bottom-0 left-0 z-0 w-full select-none object-cover opacity-90" />
-        <div className="absolute inset-0 bg-gradient-to-b from-primary via-primary/70 to-primary/20" aria-hidden />
+        <div className="absolute inset-0 z-0 confetti opacity-25" aria-hidden />
+        <div className="absolute inset-0 z-[1] bg-gradient-to-b from-primary via-primary/70 to-transparent" aria-hidden />
+        <img src={getAssetUrl("/ill/skyline.png")} alt="" aria-hidden className="pointer-events-none absolute bottom-0 left-0 z-[2] w-full select-none object-cover" />
 
         <nav className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-5 py-5 lg:px-10">
           <span className="font-display text-2xl tracking-wide" data-testid="brand">EXPLORANDO BILBAO</span>
