@@ -82,7 +82,7 @@ export default function Celebration({ open, onClose }: { open: boolean; onClose:
           </p>
           <h2 className="font-display text-6xl leading-none text-primary">¡ZORIONAK!</h2>
           <p className="mx-auto mt-3 max-w-sm text-sm font-semibold leading-relaxed text-ink-soft">
-            Has sellado las 10 paradas del Pasaporte de Pintxos. Marijaia lo celebra contigo: ¡gora Bilbao! Ahora toca brindar con la cuadrilla. On egin!
+            Has sellado las 12 paradas del Pasaporte de Pintxos. Marijaia lo celebra contigo: ¡gora Bilbao! Ahora toca brindar con la cuadrilla. On egin!
           </p>
           <Button onClick={onClose} className="mt-6" data-testid="celebration-cta">
             <PartyPopper className="size-4" /> ¡Aupa!
